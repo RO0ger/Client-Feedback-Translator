@@ -1,0 +1,319 @@
+---
+alwaysApply: false
+---
+# CLIENT FEEDBACK TRANSLATOR - CURSOR RULES
+
+## LATEST TECH STACK (August 2025)
+- **Next.js 15** (App Router) - Latest stable
+- **React 19** - Latest stable  
+- **TypeScript 5.5+** - Latest stable
+- **Tailwind CSS v4** - Latest major version
+- **Supabase** - Latest 2025 version (2.45.0+)
+- **Gemini 2.5 Flash** - Latest efficient model
+- **shadcn/ui** - Latest components
+- **Node.js 20+** - Required (Node.js 18 EOL April 2025)
+
+## OFFICIAL DOCUMENTATION SOURCES
+
+### Next.js 15
+- **Official Docs**: https://nextjs.org/docs
+- **App Router Guide**: https://nextjs.org/docs/app
+- **API Routes**: https://nextjs.org/docs/app/building-your-application/routing/route-handlers
+- **Server Components**: https://nextjs.org/docs/app/building-your-application/rendering/server-components
+
+### Supabase Latest
+- **Main Docs**: https://supabase.com/docs
+- **Next.js Integration**: https://supabase.com/docs/guides/getting-started/quickstarts/nextjs
+- **Auth Tutorial**: https://supabase.com/docs/guides/getting-started/tutorials/with-nextjs
+- **JavaScript Client**: https://supabase.com/docs/reference/javascript
+- **Database Functions**: https://supabase.com/docs/guides/database/functions
+
+### Tailwind CSS v4
+- **Main Docs**: https://tailwindcss.com/docs
+- **Configuration**: https://tailwindcss.com/docs/configuration
+- **v4 Migration**: https://tailwindcss.com/docs/upgrade-guide
+- **Utility Classes**: https://tailwindcss.com/docs/utility-first
+
+### Gemini API Latest
+- **Google AI Studio**: https://aistudio.google.com/
+- **API Reference**: https://ai.google.dev/docs
+- **JavaScript SDK**: https://www.npmjs.com/package/@google/generative-ai
+- **Model Guide**: https://ai.google.dev/models/gemini
+
+### shadcn/ui Components
+- **Main Site**: https://ui.shadcn.com/
+- **Installation**: https://ui.shadcn.com/docs/installation/next
+- **Components**: https://ui.shadcn.com/docs/components
+- **Examples**: https://ui.shadcn.com/examples
+
+## MCP SERVER CONTEXT (IF NEEDED)
+
+### Latest MCP Documentation (August 2025)
+- **Official Spec**: https://modelcontextprotocol.io/specification/2025-06-18
+- **Architecture**: https://modelcontextprotocol.io/docs/learn/architecture
+- **Server Quickstart**: https://modelcontextprotocol.io/quickstart/server
+- **TypeScript SDK**: https://github.com/modelcontextprotocol/typescript-sdk
+- **Claude Integration**: https://modelcontextprotocol.io/docs/tools/claude-desktop
+
+### MCP Implementation Patterns
+```typescript
+// ✅ CORRECT: High-Level McpServer
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+
+const server = new McpServer({
+  name: 'tool-name',
+  version: '1.0.0'
+}, {
+  capabilities: { tools: {}, logging: {} }
+});
+
+server.registerTool("tool_name", {
+  title: "Tool Title",
+  description: "Description",
+  inputSchema: { param: z.string() }
+}, async ({ param }) => {
+  return { content: [{ type: "text", text: "result" }] };
+});
+```
+
+## PROJECT STRUCTURE
+```
+client-feedback-translator/
+├── app/
+│   ├── globals.css
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── api/
+│       ├── translate/route.ts
+│       └── translations/route.ts
+├── components/
+│   ├── ui/ (shadcn components)
+│   ├── FileUpload.tsx
+│   ├── FeedbackInput.tsx
+│   ├── ResultsDisplay.tsx
+│   └── CodeComparison.tsx
+├── lib/
+│   ├── supabase.ts
+│   ├── gemini.ts
+│   ├── parser.ts
+│   └── types.ts
+└── utils/
+    ├── validation.ts
+    └── cn.ts
+```
+
+## DEVELOPMENT RULES
+
+### 1. Latest Package Versions
+```json
+{
+  "dependencies": {
+    "next": "^15.0.0",
+    "react": "^19.0.0", 
+    "@supabase/supabase-js": "^2.45.0",
+    "@google/generative-ai": "^0.17.0",
+    "tailwindcss": "^4.0.0",
+    "@radix-ui/react-dialog": "^1.1.0",
+    "lucide-react": "^0.400.0",
+    "zod": "^3.23.0"
+  }
+}
+```
+
+### 2. Import Conventions
+```typescript
+// Next.js App Router
+import { NextRequest, NextResponse } from 'next/server';
+
+// Supabase
+import { createClient } from '@supabase/supabase-js';
+
+// Gemini
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+// shadcn/ui
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+```
+
+### 3. TypeScript Strict Mode
+- Enable strict mode in tsconfig.json
+- Use proper typing for all functions
+- Define interfaces for API responses
+- Use zod for runtime validation
+
+### 4. File Parsing Requirements
+```typescript
+// Must handle these React patterns:
+interface ComponentParser {
+  functionalComponents: boolean;    // Modern hooks
+  classComponents: boolean;         // Legacy support  
+  tailwindClasses: boolean;        // Extract classes
+  inlineStyles: boolean;           // Style objects
+  styledComponents: boolean;       // CSS-in-JS
+  cssModules: boolean;             // .module.css
+}
+```
+
+### 5. AI Integration Standards
+```typescript
+// Gemini 2.5 Flash Configuration
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+// Structured Prompt Format
+const prompt = `
+ROLE: Senior Frontend Developer
+CONTEXT: ${componentContext}
+FEEDBACK: "${clientFeedback}"
+OUTPUT: Valid JSON with actionable changes
+`;
+```
+
+### 6. Database Schema (Supabase)
+```sql
+-- Required tables
+CREATE TABLE translations (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  original_feedback TEXT NOT NULL,
+  component_code TEXT NOT NULL,
+  generated_changes JSONB NOT NULL,
+  confidence_score DECIMAL(3,2),
+  user_rating INTEGER,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Performance indexes
+CREATE INDEX idx_translations_created_at ON translations(created_at DESC);
+CREATE INDEX idx_translations_confidence ON translations(confidence_score DESC);
+```
+
+### 7. API Route Standards
+```typescript
+// app/api/translate/route.ts
+export async function POST(request: NextRequest) {
+  try {
+    const { feedback, componentCode } = await request.json();
+    
+    // Validation
+    const schema = z.object({
+      feedback: z.string().min(1).max(500),
+      componentCode: z.string().min(1).max(50000)
+    });
+    
+    const validated = schema.parse({ feedback, componentCode });
+    
+    // Process...
+    
+    return NextResponse.json({ success: true, data: result });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  }
+}
+```
+
+### 8. Environment Variables
+```bash
+# .env.local (required)
+NEXT_PUBLIC_SUPABASE_URL=your_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_key
+GEMINI_API_KEY=your_gemini_key
+```
+
+### 9. UI Component Standards
+- Use shadcn/ui for base components
+- Implement proper loading states
+- Add error boundaries
+- Include accessibility attributes
+- Use Tailwind CSS v4 classes only
+- Implement responsive design (mobile-first)
+
+### 10. Error Handling
+```typescript
+// Component error boundaries
+export default function ComponentWithError() {
+  try {
+    return <MainComponent />;
+  } catch (error) {
+    return <ErrorFallback error={error} />;
+  }
+}
+
+// API error responses
+return NextResponse.json(
+  { error: "Specific error message", code: "ERROR_CODE" },
+  { status: 400 }
+);
+```
+
+## CRITICAL IMPLEMENTATION NOTES
+
+### File Upload Security
+- Validate file extensions (.jsx, .tsx only)
+- Limit file size (100KB max)
+- Sanitize file content before parsing
+- Use proper MIME type checking
+
+### AI Response Validation
+```typescript
+interface AIResponse {
+  interpretation: string;
+  changes: {
+    type: 'css' | 'props' | 'structure' | 'animation';
+    before: string;
+    after: string;
+    explanation: string;
+  }[];
+  confidence: number; // 0.0 - 1.0
+  reasoning: string;
+}
+```
+
+### Performance Requirements
+- API response time < 3 seconds
+- File parsing < 1 second  
+- Database queries optimized
+- Implement proper caching strategies
+
+### Deployment Checklist
+- Environment variables configured
+- Database migrations run
+- API endpoints tested
+- Build process verified
+- Error monitoring setup
+
+## CODE QUALITY STANDARDS
+- ESLint + Prettier configured
+- TypeScript strict mode enabled
+- Unit tests for critical functions
+- Integration tests for API routes
+- Proper Git commit messages
+- Code documentation for complex logic
+
+## DEBUGGING PRIORITIES
+1. Check official documentation first
+2. Verify latest package versions
+3. Test individual components
+4. Check browser console errors
+5. Verify API responses
+6. Test database connections
+7. Validate environment variables
+
+## NO BS DEVELOPMENT
+- Build working features, not perfect abstractions
+- Test early and often
+- Use proven patterns from official docs
+- Focus on core functionality first
+- Polish UI after functionality works
+- Deploy early for real-world testing
+
+## REFERENCE PRIORITY ORDER
+1. Official documentation (always first)
+2. GitHub repositories with recent activity
+3. Stack Overflow (recent answers only)
+4. Blog posts (published in 2025 only)
+5. Community examples (verify versions)
+
+##Always ask questions first if you have any/if you are not sure about anything
