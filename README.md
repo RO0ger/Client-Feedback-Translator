@@ -181,10 +181,6 @@ We welcome contributions! Please follow these steps to contribute:
 
 Please ensure your code adheres to the project's [Development Rules](temp_docs/rules.mdc) (e.g., TypeScript strict mode, ESLint, Prettier, unit tests).
 
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
-
 ---
 
 Made with ❤️ by Nasif
