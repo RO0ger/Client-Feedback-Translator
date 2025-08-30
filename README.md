@@ -187,4 +187,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-**Note**: This `README.md` is generated based on the project rules and aims to provide a comprehensive guide for anyone looking to understand, set up, or contribute to the Client Feedback Translator.
+Made with ❤️ by Nasif
