@@ -1,4 +1,17 @@
 import { z } from 'zod';
+import type { Session as NextAuthSession, User as NextAuthUser } from 'next-auth'
+
+declare module 'next-auth' {
+  interface Session extends NextAuthSession {
+    user?: {
+      id: string
+    } & NextAuthSession['user']
+  }
+
+  interface User extends NextAuthUser {
+    id: string
+  }
+}
 
 export interface ParsedComponent {
   componentName: string;
