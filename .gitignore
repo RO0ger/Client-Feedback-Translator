@@ -12,6 +12,11 @@
 
 # testing
 /coverage
+/e2e/
+/src/test/
+*.test.ts
+*.test.tsx
+test-results/
 
 # next.js
 /.next/
@@ -45,3 +50,4 @@ docs/
 
 # Rules
 rules/
+
