@@ -4,3 +4,6 @@ import { authOptions } from '@/server/auth'
 const handler = NextAuth(authOptions)
 
 export { handler as GET, handler as POST }
+
+// Force Node.js runtime for NextAuth database adapter
+export const runtime = 'nodejs'
