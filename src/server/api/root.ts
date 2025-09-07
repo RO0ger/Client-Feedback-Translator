@@ -1,5 +1,6 @@
 import { createTRPCRouter, publicProcedure } from '@/server/trpc';
 import { analysisRouter } from './routers/analysis';
+import { historyRouter } from './routers/history';
 
 // Import individual routers (will be created later)
 // import { feedbackRouter } from './routers/feedback'
@@ -19,6 +20,7 @@ export const appRouter = createTRPCRouter({
   // Placeholder for feedback router - will be implemented later
   // feedback: feedbackRouter,
   analysis: analysisRouter,
+  history: historyRouter,
 
   // Placeholder for translation router - will be implemented later
   // translation: translationRouter,

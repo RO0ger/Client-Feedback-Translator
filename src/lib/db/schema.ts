@@ -34,3 +34,19 @@ export const translations = pgTable('translations', {
   targetLanguage: text('target_language').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
 })
+
+export const analyses = pgTable('analyses', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id').references(() => users.id).notNull(),
+  fileName: text('file_name').notNull(),
+  fileSize: integer('file_size').notNull(),
+  originalContent: text('original_content').notNull(),
+  feedback: text('feedback').notNull(),
+  interpretation: text('interpretation').notNull(),
+  suggestions: text('suggestions').notNull(), // JSON string with diffs
+  confidence: integer('confidence').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  // Soft delete support
+  isDeleted: boolean('is_deleted').default(false).notNull(),
+  deletedAt: timestamp('deleted_at'),
+})
