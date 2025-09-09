@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '@/server/trpc';
 import { analyses } from '@/lib/db/schema';
 import { eq, desc, and, ilike, or } from 'drizzle-orm';
+import { TRPCError } from '@trpc/server';
 
 export const historyRouter = createTRPCRouter({
   getInfinite: protectedProcedure
@@ -63,5 +64,32 @@ export const historyRouter = createTRPCRouter({
         ))
         .orderBy(desc(analyses.createdAt))
         .limit(input.limit);
+    }),
+    
+  delete: protectedProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .mutation(async ({ input, ctx }) => {
+      const [deletedAnalysis] = await ctx.db
+        .update(analyses)
+        .set({
+          isDeleted: true,
+          deletedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(analyses.id, input.id),
+            eq(analyses.userId, ctx.session.user.id)
+          )
+        )
+        .returning({ id: analyses.id });
+
+      if (!deletedAnalysis) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Analysis not found or you do not have permission to delete it.',
+        });
+      }
+
+      return { success: true, id: deletedAnalysis.id };
     }),
 });
