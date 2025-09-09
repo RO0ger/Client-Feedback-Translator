@@ -12,6 +12,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { fileUploadSchema } from '@/lib/validations/analysis';
 import { z } from 'zod';
 
 interface FileUploadProps {
