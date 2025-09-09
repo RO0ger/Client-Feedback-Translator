@@ -1,4 +1,4 @@
-import { pgTable, serial, text, integer, timestamp, boolean, uuid } from 'drizzle-orm/pg-core'
+import { pgTable, serial, text, integer, timestamp, boolean, uuid, jsonb, numeric } from 'drizzle-orm/pg-core'
 
 export const users = pgTable('users', {
   id: text('id').primaryKey(),
@@ -27,11 +27,14 @@ export const feedback = pgTable('feedback', {
 })
 
 export const translations = pgTable('translations', {
-  id: serial('id').primaryKey(),
-  feedbackId: integer('feedback_id').notNull().references(() => feedback.id),
-  originalText: text('original_text').notNull(),
-  translatedText: text('translated_text').notNull(),
-  targetLanguage: text('target_language').notNull(),
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id').references(() => users.id).notNull(),
+  original_feedback: text('original_feedback').notNull(),
+  component_code: text('component_code').notNull(),
+  component_name: text('component_name').notNull(),
+  generated_changes: jsonb('generated_changes').notNull(),
+  confidence_score: numeric('confidence_score').notNull(),
+  user_rating: integer('user_rating'),
   createdAt: timestamp('created_at').defaultNow(),
 })
 

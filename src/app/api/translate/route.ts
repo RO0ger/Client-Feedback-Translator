@@ -5,9 +5,17 @@ import { translateFeedback, GeminiError } from '@/lib/gemini';
 import { ParserError } from '@/lib/parser';
 import { supabase } from '@/lib/supabase';
 import { AiTranslateResponse, TranslateResponse } from '@/lib/types';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/server/auth';
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const userId = session.user.id;
+
     const body = await request.json();
 
     const schema = z.object({
@@ -45,6 +53,7 @@ export async function POST(request: NextRequest) {
             component_name: parsedComponent.componentName,
             generated_changes: aiResponse.actionable_changes,
             confidence_score: aiResponse.confidence,
+            user_id: userId,
           },
         ])
         .select('id')
