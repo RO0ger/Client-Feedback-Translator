@@ -16,7 +16,8 @@
     "test:e2e:debug": "playwright test --debug",
     "playwright:install": "playwright install",
     "playwright:install-deps": "playwright install-deps",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "db:push": "drizzle-kit push"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.10.0",
