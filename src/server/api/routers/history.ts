@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '@/server/trpc';
 import { analyses } from '@/lib/db/schema';
-import { eq, desc, and, ilike, or } from 'drizzle-orm';
+import { eq, desc, and, ilike, or, lt } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 
 export const historyRouter = createTRPCRouter({
@@ -11,6 +11,14 @@ export const historyRouter = createTRPCRouter({
       cursor: z.string().uuid().optional(), // Using UUID cursor
     }))
     .query(async ({ input, ctx }) => {
+      const { limit, cursor } = input;
+
+      const cursorQuery = cursor
+        ? ctx.db.select({ createdAt: analyses.createdAt }).from(analyses).where(eq(analyses.id, cursor))
+        : Promise.resolve([]);
+
+      const [cursorItem] = await cursorQuery;
+
       const items = await ctx.db
         .select({
           id: analyses.id,
@@ -22,12 +30,11 @@ export const historyRouter = createTRPCRouter({
         .from(analyses)
         .where(and(
           eq(analyses.userId, ctx.session.user.id),
-          eq(analyses.isDeleted, false)
+          eq(analyses.isDeleted, false),
+          cursorItem ? lt(analyses.createdAt, cursorItem.createdAt) : undefined
         ))
         .orderBy(desc(analyses.createdAt))
-        .limit(input.limit + 1)
-        // Cursor logic will be added if input.cursor is present
-        // For now, it fetches from the beginning
+        .limit(limit + 1);
         
       let nextCursor: string | undefined;
       if (items.length > input.limit) {

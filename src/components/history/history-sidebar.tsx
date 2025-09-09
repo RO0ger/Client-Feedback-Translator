@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Command, CommandInput, CommandList, CommandItem } from '@/components/ui/command'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -12,6 +13,7 @@ import { toast } from 'sonner'
 export function HistorySidebar() {
   const [searchQuery, setSearchQuery] = useState('')
   const [open, setOpen] = useState(false)
+  const router = useRouter()
 
   const utils = trpc.useUtils()
 
@@ -80,7 +82,7 @@ export function HistorySidebar() {
                   key={item.id}
                   className="flex flex-col items-start gap-3 p-4 rounded-xl hover:bg-gray-50/80 cursor-pointer border border-transparent hover:border-gray-200/50 mb-2"
                   onSelect={() => {
-                    window.location.href = `/results/${item.id}`
+                    router.push(`/results/${item.id}`)
                     setOpen(false)
                   }}
                 >
