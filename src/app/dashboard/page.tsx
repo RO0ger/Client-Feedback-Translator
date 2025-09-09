@@ -12,6 +12,7 @@ import {
   createAnalysisSchema,
   fileUploadSchema,
 } from '@/lib/validations/analysis';
+import { HistorySidebar } from '@/components/history/history-sidebar';
 
 type AnalysisFormData = z.infer<typeof createAnalysisSchema>;
 
@@ -91,6 +92,7 @@ export default function DashboardPage() {
             </section>
           </form>
         </div>
+        <HistorySidebar />
       </div>
     </FormProvider>
   );
