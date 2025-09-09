@@ -8,7 +8,10 @@ import { FileUpload } from '@/components/upload/file-upload';
 import { FeedbackForm } from '@/components/forms/feedback-form';
 import { trpc } from '@/utils/trpc';
 import { toast } from 'sonner';
-import { createAnalysisSchema } from '@/lib/validations/analysis';
+import {
+  createAnalysisSchema,
+  fileUploadSchema,
+} from '@/lib/validations/analysis';
 
 type AnalysisFormData = z.infer<typeof createAnalysisSchema>;
 
@@ -72,6 +75,7 @@ export default function DashboardPage() {
               </h2>
               <FileUpload
                 name="fileUpload"
+                schema={fileUploadSchema}
                 disabled={createAnalysis.isLoading || isSubmitting}
               />
             </section>
@@ -81,7 +85,6 @@ export default function DashboardPage() {
                 2. Provide Feedback
               </h2>
               <FeedbackForm
-                onSubmit={() => {}} // Now handled by the main form
                 disabled={createAnalysis.isLoading || isSubmitting}
                 isLoading={createAnalysis.isLoading || isSubmitting}
               />
