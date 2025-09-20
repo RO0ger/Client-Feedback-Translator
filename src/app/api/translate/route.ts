@@ -5,12 +5,11 @@ import { translateFeedback, GeminiError } from '@/lib/gemini';
 import { ParserError } from '@/lib/parser';
 import { supabase } from '@/lib/supabase';
 import { AiTranslateResponse, TranslateResponse } from '@/lib/types';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/server/auth';
+import { auth } from '@/auth';
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
