@@ -1,17 +1,56 @@
-import { pgTable, serial, text, integer, timestamp, boolean, uuid, jsonb, numeric } from 'drizzle-orm/pg-core'
+import { pgTable, serial, text, integer, timestamp, boolean, uuid, jsonb, numeric, pgEnum } from 'drizzle-orm/pg-core'
 
-export const users = pgTable('users', {
-  id: text('id').primaryKey(),
-  email: text('email').notNull().unique(),
+export const categoryEnum = pgEnum('category', ['bug', 'feature', 'improvement'])
+
+// NextAuth.js required tables - using singular names to match actual DB
+export const users = pgTable('user', {
+  id: uuid('id').defaultRandom().primaryKey(),
   name: text('name'),
+  email: text('email').notNull().unique(),
+  emailVerified: timestamp('emailVerified', { mode: 'date' }),
+  image: text('image'),
   createdAt: timestamp('created_at').defaultNow(),
+})
+
+export const accounts = pgTable('account', {
+  userId: uuid('userId')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  type: text('type').notNull(),
+  provider: text('provider').notNull(),
+  providerAccountId: text('providerAccountId').notNull(),
+  refresh_token: text('refresh_token'),
+  access_token: text('access_token'),
+  expires_at: integer('expires_at'),
+  token_type: text('token_type'),
+  scope: text('scope'),
+  id_token: text('id_token'),
+  session_state: text('session_state'),
+}, (account) => ({
+  compoundKey: {
+    primaryKey: [account.provider, account.providerAccountId],
+  },
+}))
+
+export const sessions = pgTable('session', {
+  sessionToken: text('sessionToken').notNull().primaryKey(),
+  userId: uuid('userId')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  expires: timestamp('expires', { mode: 'date' }).notNull(),
+})
+
+export const verificationTokens = pgTable('verificationToken', {
+  identifier: text('identifier').notNull(),
+  token: text('token').notNull(),
+  expires: timestamp('expires', { mode: 'date' }).notNull(),
 })
 
 export const feedback = pgTable('feedback', {
   id: serial('id').primaryKey(),
   content: text('content').notNull(),
   rating: integer('rating').notNull(),
-  category: text('category').$type<'bug' | 'feature' | 'improvement'>().notNull(),
+  category: categoryEnum('category').notNull(),
   userId: uuid('user_id').references(() => users.id).notNull(),
   
   // Audit trail fields
@@ -52,4 +91,14 @@ export const analyses = pgTable('analyses', {
   // Soft delete support
   isDeleted: boolean('is_deleted').default(false).notNull(),
   deletedAt: timestamp('deleted_at'),
+})
+
+// Feedback patterns table from the database screenshots
+export const feedbackPatterns = pgTable('feedback_patterns', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  pattern: text('pattern').notNull(),
+  commonSolutions: jsonb('common_solutions').notNull(),
+  successRate: numeric('success_rate').notNull(),
+  usageCount: integer('usage_count').default(1).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 })
