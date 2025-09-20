@@ -1,62 +1,28 @@
-import { type CreateNextContextOptions } from '@trpc/server/adapters/next'
-import { type Session } from 'next-auth'
-import { getServerSession } from 'next-auth/next'
-import { authOptions } from './auth'
+import { auth } from '@/auth'
 import { db } from '@/lib/db'
-import { users } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
-
-// Define the user type from database schema
-export type User = typeof users.$inferSelect
-
-// Context type that includes session, database, and user
-export interface Context {
-  session: Session | null
-  user: User | null
-  userId: string | null
-  db: typeof db
-  req: CreateNextContextOptions['req']
-  res: CreateNextContextOptions['res']
-}
 
 /**
- * Creates tRPC context for each request
- * Includes authenticated session, database connection, and user data
+ * 1. CONTEXT
+ *
+ * This section defines the "contexts" that are available in the backend API.
+ *
+ * These allow you to access things when processing a request, like the database, the session, etc.
+ *
+ * This helper generates the "internals" for a tRPC context. The API handler and RSC clients
+ * will use this function to create their specific contexts.
+ *
+ * @see https://trpc.io/docs/server/context
  */
-export async function createTRPCContext(opts: CreateNextContextOptions): Promise<Context> {
-  const { req, res } = opts
-
-  // Get session from NextAuth
-  const session = await getServerSession(req, res, authOptions)
-
-  let user: User | null = null
-  let userId: string | null = null
-
-  // If user is authenticated, fetch their data from database
-  if (session?.user?.email) {
-    try {
-      const dbUsers = await db
-        .select()
-        .from(users)
-        .where(eq(users.email, session.user.email))
-        .limit(1)
-
-      if (dbUsers[0]) {
-        user = dbUsers[0]
-        userId = dbUsers[0].id
-      }
-    } catch (error) {
-      // Log error but don't fail the request
-      console.error('Failed to fetch user from database:', error)
-    }
-  }
+export const createTRPCContext = async (opts: { headers: Headers }) => {
+  const session = await auth()
 
   return {
-    session,
-    user,
-    userId,
     db,
-    req,
-    res,
+    session,
+    // Use session user data directly instead of fetching from DB
+    user: session?.user || null,
+    ...opts,
   }
 }
+
+export type Context = Awaited<ReturnType<typeof createTRPCContext>>
