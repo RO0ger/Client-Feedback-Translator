@@ -13,6 +13,7 @@ import {
   fileUploadSchema,
 } from '@/lib/validations/analysis';
 import { HistorySidebar } from '@/components/history/history-sidebar';
+import { motion } from 'framer-motion';
 
 type AnalysisFormData = z.infer<typeof createAnalysisSchema>;
 
@@ -58,21 +59,31 @@ export default function DashboardPage() {
   return (
     <FormProvider {...methods}>
       <div className="min-h-screen">
-        <div className="container max-w-4xl mx-auto px-6 py-12">
-          <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold tracking-tight text-gray-900 mb-4">
+        <div className="container mx-auto max-w-4xl px-4 py-8 md:px-6 md:py-12">
+          <motion.div
+            className="mb-12 text-center"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h1 className="mb-4 text-3xl font-bold tracking-tight text-gray-900 md:text-5xl">
               Client Feedback Translator
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="mx-auto max-w-3xl text-lg text-gray-600 md:text-xl">
               Upload your React component, provide client feedback, and get
               actionable code changes instantly.
             </p>
-          </div>
+          </motion.div>
 
           <form onSubmit={handleSubmit(handleAnalysis)}>
-            <div className="bg-white/70 backdrop-blur-lg border border-white/20 shadow-2xl rounded-2xl p-10 space-y-12">
+            <motion.div
+              className="space-y-12 rounded-2xl border border-white/20 bg-white/70 p-6 shadow-2xl backdrop-blur-lg md:p-10"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
               <section>
-                <h2 className="text-3xl font-semibold text-gray-900 mb-6">
+                <h2 className="mb-6 text-2xl font-semibold text-gray-900 md:text-3xl">
                   1. Upload Component
                 </h2>
                 <FileUpload
@@ -83,7 +94,7 @@ export default function DashboardPage() {
               </section>
 
               <section>
-                <h2 className="text-3xl font-semibold text-gray-900 mb-6">
+                <h2 className="mb-6 text-2xl font-semibold text-gray-900 md:text-3xl">
                   2. Provide Feedback
                 </h2>
                 <FeedbackForm
@@ -91,7 +102,7 @@ export default function DashboardPage() {
                   isLoading={createAnalysis.isLoading || isSubmitting}
                 />
               </section>
-            </div>
+            </motion.div>
           </form>
         </div>
         <HistorySidebar />

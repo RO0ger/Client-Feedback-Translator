@@ -4,6 +4,7 @@ import { ConfidenceScore } from "@/components/results/confidence-score";
 import { HistorySidebar } from "@/components/history/history-sidebar";
 import { BackButton } from "@/components/ui/back-button";
 import { api } from "@/lib/trpc/server";
+import { MotionDiv } from "@/components/animations/motion-div";
 
 interface ResultsPageProps {
   params: { id: string };
@@ -25,25 +26,35 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
 
   return (
     <div className="min-h-screen">
-      <div className="container max-w-6xl mx-auto px-6 py-8">
-        <div className="flex items-center gap-4 mb-8">
+      <div className="container mx-auto max-w-6xl px-4 py-6 md:px-6 md:py-8">
+        <MotionDiv
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8 flex items-center gap-4"
+        >
           <BackButton />
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-gray-900 md:text-3xl">
               {analysis.fileName}
             </h1>
-            <p className="text-gray-600 mt-1">Analysis Results</p>
+            <p className="mt-1 text-gray-600">Analysis Results</p>
           </div>
-        </div>
+        </MotionDiv>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Interpretation */}
-          <div className="lg:col-span-1">
-            <div className="bg-white/70 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl sticky top-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          <MotionDiv
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="lg:col-span-1"
+          >
+            <div className="rounded-2xl border border-white/20 bg-white/70 p-4 shadow-2xl backdrop-blur-lg lg:sticky lg:top-8 md:p-6">
+              <h2 className="mb-4 text-lg font-semibold text-gray-900 md:text-xl">
                 Interpretation
               </h2>
-              <p className="text-gray-700 mb-6" data-testid="interpretation">
+              <p className="mb-6 text-gray-700" data-testid="interpretation">
                 {analysis.interpretation}
               </p>
 
@@ -58,11 +69,16 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
                 </p>
               </div>
             </div>
-          </div>
+          </MotionDiv>
 
           {/* Right Column - Suggestions */}
-          <div className="lg:col-span-2">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+          <MotionDiv
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="lg:col-span-2"
+          >
+            <h2 className="mb-6 text-xl font-semibold text-gray-900 md:text-2xl">
               Suggested Changes
             </h2>
             <div className="space-y-8" data-testid="code-suggestions">
@@ -77,7 +93,7 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
                 />
               ))}
             </div>
-          </div>
+          </MotionDiv>
         </div>
       </div>
 

@@ -9,6 +9,7 @@ import { History, Search, FileCode, Calendar, Trash2 } from 'lucide-react'
 import { trpc } from '@/utils/trpc'
 import { formatDistanceToNow } from 'date-fns'
 import { toast } from 'sonner'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export function HistorySidebar() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -45,9 +46,13 @@ export function HistorySidebar() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <button className="fixed top-6 right-6 p-4 bg-white/80 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 z-50">
+        <motion.button
+          className="fixed top-6 right-6 p-4 bg-white/80 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 z-50"
+          whileHover={{ scale: 1.1, rotate: 5 }}
+          whileTap={{ scale: 0.9 }}
+        >
           <History className="h-6 w-6 text-gray-700" />
-        </button>
+        </motion.button>
       </SheetTrigger>
       
       <SheetContent className="w-full sm:w-96 p-0 bg-white/80 backdrop-blur-md border-l border-white/20 shadow-2xl">
@@ -71,55 +76,70 @@ export function HistorySidebar() {
 
         <ScrollArea className="flex-1 p-4">
           <CommandList>
-            {historyItems.length === 0 ? (
-              <div className="text-center py-12">
-                <FileCode className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-                <p className="text-gray-500">No analyses found</p>
-              </div>
-            ) : (
-              historyItems.map((item) => (
-                <CommandItem
-                  key={item.id}
-                  className="flex flex-col items-start gap-3 p-4 rounded-xl hover:bg-gray-50/80 cursor-pointer border border-transparent hover:border-gray-200/50 mb-2"
-                  onSelect={() => {
-                    router.push(`/results/${item.id}`)
-                    setOpen(false)
-                  }}
+            <AnimatePresence>
+              {historyItems.length === 0 ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="text-center py-12"
                 >
-                  <div className="flex items-start justify-between w-full">
-                    <div className="flex items-center gap-2 flex-1">
-                      <FileCode className="h-4 w-4 text-blue-500 flex-shrink-0" />
-                      <span className="font-medium text-sm truncate">
-                        {item.fileName}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-xs">
-                        {item.confidence}%
-                      </Badge>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          deleteAnalysis.mutate({ id: item.id })
-                        }}
-                        className="p-1 hover:bg-red-100 rounded transition-colors"
-                      >
-                        <Trash2 className="h-3 w-3 text-red-500" />
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <p className="text-xs text-gray-600 line-clamp-2 w-full">
-                    {item.feedback}
-                  </p>
-                  
-                  <div className="flex items-center gap-1 text-xs text-gray-400">
-                    <Calendar className="h-3 w-3" />
-                    {formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}
-                  </div>
-                </CommandItem>
-              ))
-            )}
+                  <FileCode className="mx-auto h-12 w-12 text-gray-300 mb-4" />
+                  <p className="text-gray-500">No analyses found</p>
+                </motion.div>
+              ) : (
+                historyItems.map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <CommandItem
+                      className="flex flex-col items-start gap-3 p-4 rounded-xl hover:bg-gray-50/80 cursor-pointer border border-transparent hover:border-gray-200/50 mb-2"
+                      onSelect={() => {
+                        router.push(`/results/${item.id}`)
+                        setOpen(false)
+                      }}
+                    >
+                      <div className="flex items-start justify-between w-full">
+                        <div className="flex items-center gap-2 flex-1">
+                          <FileCode className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                          <span className="font-medium text-sm truncate">
+                            {item.fileName}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary" className="text-xs">
+                            {item.confidence}%
+                          </Badge>
+                          <motion.button
+                            whileHover={{ scale: 1.2 }}
+                            whileTap={{ scale: 0.8 }}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              deleteAnalysis.mutate({ id: item.id })
+                            }}
+                            className="p-1 hover:bg-red-100 rounded transition-colors"
+                          >
+                            <Trash2 className="h-3 w-3 text-red-500" />
+                          </motion.button>
+                        </div>
+                      </div>
+
+                      <p className="text-xs text-gray-600 line-clamp-2 w-full">
+                        {item.feedback}
+                      </p>
+
+                      <div className="flex items-center gap-1 text-xs text-gray-400">
+                        <Calendar className="h-3 w-3" />
+                        {formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}
+                      </div>
+                    </CommandItem>
+                  </motion.div>
+                ))
+              )}
+            </AnimatePresence>
           </CommandList>
 
           {hasNextPage && !searchQuery && (
