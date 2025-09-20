@@ -45,12 +45,12 @@ export function HistorySidebar() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <button className="fixed top-6 right-6 p-4 bg-white/80 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105">
+        <button className="fixed top-6 right-6 p-4 bg-white/80 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 z-50">
           <History className="h-6 w-6 text-gray-700" />
         </button>
       </SheetTrigger>
       
-      <SheetContent className="w-96 p-0 bg-white/95 backdrop-blur-md">
+      <SheetContent className="w-full sm:w-96 p-0 bg-white/80 backdrop-blur-md border-l border-white/20 shadow-2xl">
         <SheetHeader className="p-6 border-b border-gray-200/50">
           <SheetTitle className="flex items-center gap-3 text-xl">
             <History className="h-6 w-6" />
