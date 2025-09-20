@@ -138,10 +138,10 @@ export function FileUpload({
 
   return (
     <div className={cn('w-full', className)}>
-      <div
+      <motion.div
         {...getRootProps()}
         className={cn(
-          'relative cursor-pointer rounded-2xl border-2 border-dashed p-8 transition-all duration-200 backdrop-blur-sm',
+          'relative cursor-pointer rounded-2xl border-2 border-dashed p-6 text-center transition-all duration-200 backdrop-blur-sm md:p-8',
           {
             'border-blue-400 bg-blue-50/50 scale-[1.02]':
               isDragActive && !isDragReject && !disabled,
@@ -152,6 +152,8 @@ export function FileUpload({
               !hasFile && !errorMessage && !isDragActive,
           }
         )}
+        whileHover={{ scale: 1.01 }}
+        whileTap={{ scale: 0.99 }}
       >
         <input {...getInputProps()} data-testid="file-upload-input" />
         <AnimatePresence mode="wait">
@@ -163,8 +165,8 @@ export function FileUpload({
               exit={{ opacity: 0, y: -10 }}
               className="text-center"
             >
-              <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
-              <p className="text-lg font-medium text-red-700 mb-2">
+              <AlertCircle className="mx-auto mb-4 h-10 w-10 text-red-500 md:h-12 md:w-12" />
+              <p className="mb-2 text-base font-medium text-red-700 md:text-lg">
                 Upload Error
               </p>
               <p className="text-sm text-red-600">{errorMessage}</p>
@@ -177,8 +179,8 @@ export function FileUpload({
               exit={{ opacity: 0, y: -10 }}
               className="text-center"
             >
-              <Loader2 className="mx-auto h-12 w-12 text-blue-500 mb-4 animate-spin" />
-              <p className="text-lg font-medium text-blue-700">
+              <Loader2 className="mx-auto mb-4 h-10 w-10 animate-spin text-blue-500 md:h-12 md:w-12" />
+              <p className="text-base font-medium text-blue-700 md:text-lg">
                 Processing File...
               </p>
             </motion.div>
@@ -188,12 +190,12 @@ export function FileUpload({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="flex items-center justify-between"
+              className="flex flex-col items-center justify-center gap-4 text-center md:flex-row md:justify-between md:text-left"
             >
-              <div className="flex items-center gap-4">
-                <CheckCircle2 className="h-12 w-12 text-green-600" />
+              <div className="flex flex-col items-center gap-4 md:flex-row">
+                <CheckCircle2 className="h-10 w-10 text-green-600 md:h-12 md:w-12" />
                 <div>
-                  <p className="text-lg font-medium text-gray-900">
+                  <p className="font-medium text-gray-900 md:text-lg">
                     {uploadedFile.name}
                   </p>
                   <p className="text-sm text-gray-500">
@@ -222,8 +224,8 @@ export function FileUpload({
               exit={{ opacity: 0 }}
               className="text-center"
             >
-              <Upload className="mx-auto h-16 w-16 text-gray-400 mb-6" />
-              <p className="text-xl font-semibold text-gray-900 mb-3">
+              <Upload className="mx-auto mb-6 h-12 w-12 text-gray-400 md:h-16 md:w-16" />
+              <p className="mb-3 text-lg font-semibold text-gray-900 md:text-xl">
                 {isDragActive
                   ? 'Drop your file here'
                   : 'Upload your React component'}
@@ -232,7 +234,7 @@ export function FileUpload({
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </motion.div>
     </div>
   );
 }

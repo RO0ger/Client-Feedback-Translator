@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner"
 import { Providers } from "@/app/_components/providers";
+import PageTransition from "@/components/animations/page-transition";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +31,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
-          {children}
+          <PageTransition>
+            {children}
+          </PageTransition>
           <Toaster />
         </Providers>
       </body>
