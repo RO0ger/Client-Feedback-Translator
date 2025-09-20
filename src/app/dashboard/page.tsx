@@ -57,39 +57,41 @@ export default function DashboardPage() {
 
   return (
     <FormProvider {...methods}>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <div className="min-h-screen">
         <div className="container max-w-4xl mx-auto px-6 py-12">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            <h1 className="text-5xl font-bold tracking-tight text-gray-900 mb-4">
               Client Feedback Translator
             </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Upload your React component, provide client feedback, and get
               actionable code changes instantly.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit(handleAnalysis)} className="space-y-12">
-            <section>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-                1. Upload Component
-              </h2>
-              <FileUpload
-                name="fileUpload"
-                schema={fileUploadSchema}
-                disabled={createAnalysis.isLoading || isSubmitting}
-              />
-            </section>
+          <form onSubmit={handleSubmit(handleAnalysis)}>
+            <div className="bg-white/70 backdrop-blur-lg border border-white/20 shadow-2xl rounded-2xl p-10 space-y-12">
+              <section>
+                <h2 className="text-3xl font-semibold text-gray-900 mb-6">
+                  1. Upload Component
+                </h2>
+                <FileUpload
+                  name="fileUpload"
+                  schema={fileUploadSchema}
+                  disabled={createAnalysis.isLoading || isSubmitting}
+                />
+              </section>
 
-            <section>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-                2. Provide Feedback
-              </h2>
-              <FeedbackForm
-                disabled={createAnalysis.isLoading || isSubmitting}
-                isLoading={createAnalysis.isLoading || isSubmitting}
-              />
-            </section>
+              <section>
+                <h2 className="text-3xl font-semibold text-gray-900 mb-6">
+                  2. Provide Feedback
+                </h2>
+                <FeedbackForm
+                  disabled={createAnalysis.isLoading || isSubmitting}
+                  isLoading={createAnalysis.isLoading || isSubmitting}
+                />
+              </section>
+            </div>
           </form>
         </div>
         <HistorySidebar />

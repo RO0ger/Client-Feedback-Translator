@@ -24,7 +24,7 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
   }>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen">
       <div className="container max-w-6xl mx-auto px-6 py-8">
         <div className="flex items-center gap-4 mb-8">
           <BackButton />
@@ -39,7 +39,7 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Interpretation */}
           <div className="lg:col-span-1">
-            <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg sticky top-8">
+            <div className="bg-white/70 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl sticky top-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
                 Interpretation
               </h2>
@@ -54,7 +54,7 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
                   Original Feedback
                 </h3>
                 <p className="text-blue-800 text-sm italic">
-                  "{analysis.feedback}"
+                  &ldquo;{analysis.feedback}&rdquo;
                 </p>
               </div>
             </div>
