@@ -13,7 +13,7 @@ interface ResultsPageProps {
 }
 
 export default async function ResultsPage({ params }: ResultsPageProps) {
-  const api = createApiCaller();
+  const api = await createApiCaller();
   const analysis = await api.analysis.getById({ id: params.id }).catch(() => null);
 
   if (!analysis) {

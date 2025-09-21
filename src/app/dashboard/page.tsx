@@ -89,7 +89,7 @@ export default function DashboardPage() {
                 <FileUpload
                   name="fileUpload"
                   schema={fileUploadSchema}
-                  disabled={createAnalysis.isLoading || isSubmitting}
+                  disabled={createAnalysis.isPending || isSubmitting}
                 />
               </section>
 
@@ -98,8 +98,8 @@ export default function DashboardPage() {
                   2. Provide Feedback
                 </h2>
                 <FeedbackForm
-                  disabled={createAnalysis.isLoading || isSubmitting}
-                  isLoading={createAnalysis.isLoading || isSubmitting}
+                  disabled={createAnalysis.isPending || isSubmitting}
+                  isLoading={createAnalysis.isPending || isSubmitting}
                 />
               </section>
             </motion.div>
