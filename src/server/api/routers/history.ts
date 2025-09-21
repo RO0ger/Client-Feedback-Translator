@@ -35,7 +35,7 @@ export const historyRouter = createTRPCRouter({
         ))
         .orderBy(desc(analyses.createdAt))
         .limit(limit + 1);
-        
+
       let nextCursor: string | undefined;
       if (items.length > input.limit) {
         const nextItem = items.pop();
@@ -72,7 +72,7 @@ export const historyRouter = createTRPCRouter({
         .orderBy(desc(analyses.createdAt))
         .limit(input.limit);
     }),
-    
+
   delete: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ input, ctx }) => {
