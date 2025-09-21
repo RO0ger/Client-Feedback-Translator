@@ -18,7 +18,6 @@ if (process.env.NODE_ENV === 'production') {
     idle_timeout: 20,
     max_lifetime: 60 * 30,
     connect_timeout: 30,
-    socket_timeout: 60,
     prepare: false,
     ssl: 'require',
   });
@@ -29,7 +28,6 @@ if (process.env.NODE_ENV === 'production') {
       idle_timeout: 20,
       max_lifetime: 60 * 30,
       connect_timeout: 30,
-      socket_timeout: 60,
       prepare: false,
       ssl: 'require',
       debug: true, // Enable debug logging in development

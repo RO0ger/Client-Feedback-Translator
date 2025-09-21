@@ -2,14 +2,20 @@ import { z } from 'zod';
 import type { Session as NextAuthSession, User as NextAuthUser } from 'next-auth'
 
 declare module 'next-auth' {
-  interface Session extends NextAuthSession {
+  interface Session {
     user?: {
       id: string
-    } & NextAuthSession['user']
+      name?: string | null
+      email?: string | null
+      image?: string | null
+    }
   }
 
-  interface User extends NextAuthUser {
+  interface User {
     id: string
+    name?: string | null
+    email?: string | null
+    image?: string | null
   }
 }
 
