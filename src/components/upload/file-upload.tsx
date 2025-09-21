@@ -145,7 +145,7 @@ export function FileUpload({
 
   return (
     <div className={cn('w-full', className)}>
-      <motion.div
+      <div
         {...getRootProps()}
         data-testid="dropzone"
         className={cn(
@@ -160,8 +160,6 @@ export function FileUpload({
               !hasFile && !errorMessage && !isDragActive,
           }
         )}
-        whileHover={{ scale: 1.01 }}
-        whileTap={{ scale: 0.99 }}
       >
         <input {...getInputProps()} data-testid="file-upload-input" disabled={disabled || isProcessing} />
         <AnimatePresence mode="wait">
@@ -242,7 +240,7 @@ export function FileUpload({
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
+      </div>
     </div>
   );
 }

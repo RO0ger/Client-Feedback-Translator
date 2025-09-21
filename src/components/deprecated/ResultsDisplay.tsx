@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Copy } from 'lucide-react';
 import { toast } from 'sonner';
 import { CodeComparison } from './CodeComparison';
-import { RatingSystem } from './RatingSystem';
+import { RatingSystem } from '../RatingSystem';
 
 
 interface ResultsDisplayProps {
