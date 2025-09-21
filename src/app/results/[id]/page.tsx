@@ -3,14 +3,17 @@ import { CodeDiff } from "@/components/results/code-diff";
 import { ConfidenceScore } from "@/components/results/confidence-score";
 import { HistorySidebar } from "@/components/history/history-sidebar";
 import { BackButton } from "@/components/ui/back-button";
-import { api } from "@/lib/trpc/server";
+import { createApiCaller } from "@/lib/trpc/server";
 import { MotionDiv } from "@/components/animations/motion-div";
+
+export const revalidate = 60 // Revalidate page every 60 seconds
 
 interface ResultsPageProps {
   params: { id: string };
 }
 
 export default async function ResultsPage({ params }: ResultsPageProps) {
+  const api = createApiCaller();
   const analysis = await api.analysis.getById({ id: params.id }).catch(() => null);
 
   if (!analysis) {

@@ -75,14 +75,14 @@ export default function DashboardPage() {
             </p>
           </motion.div>
 
-          <form onSubmit={handleSubmit(handleAnalysis)}>
+          <form onSubmit={handleSubmit(handleAnalysis)} data-testid="analysis-form">
             <motion.div
               className="space-y-12 rounded-2xl border border-white/20 bg-white/70 p-6 shadow-2xl backdrop-blur-lg md:p-10"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <section>
+              <section data-testid="upload-section">
                 <h2 className="mb-6 text-2xl font-semibold text-gray-900 md:text-3xl">
                   1. Upload Component
                 </h2>
@@ -93,7 +93,7 @@ export default function DashboardPage() {
                 />
               </section>
 
-              <section>
+              <section data-testid="feedback-section">
                 <h2 className="mb-6 text-2xl font-semibold text-gray-900 md:text-3xl">
                   2. Provide Feedback
                 </h2>
