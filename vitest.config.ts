@@ -8,14 +8,21 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts'],
+    setupFiles: ['./src/test/setup.tsx'],
     css: true,
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
       '**/e2e/**',
       '**/.{idea,git,cache,output,temp}/**',
-      '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*'
+      '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
+      '**/.next/**',
+      '**/out/**',
+      '**/build/**',
+    ],
+    include: [
+      '**/__tests__/**/*.(js|jsx|ts|tsx)',
+      '**/*.(test|spec).(js|jsx|ts|tsx)',
     ],
     // Configure test environment for Next.js 15 + React 19
     server: {
@@ -29,26 +36,4 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  // Exclude node_modules and next.js build outputs
-  testPathIgnorePatterns: [
-    '/node_modules/',
-    '/.next/',
-    '/out/',
-    '/e2e/',
-    '**/e2e/**',
-  ],
-  // Include test files
-  testMatch: [
-    '**/__tests__/**/*.(js|jsx|ts|tsx)',
-    '**/*.(test|spec).(js|jsx|ts|tsx)',
-  ],
-  // Exclude e2e tests and other directories
-  exclude: [
-    'e2e/**',
-    '**/e2e/**',
-    'node_modules/**',
-    'dist/**',
-    'build/**',
-    '.next/**',
-  ],
 })
