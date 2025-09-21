@@ -11,7 +11,7 @@ import { createTRPCContext } from '@/server/context'
  * Supports both GET and POST requests for queries and mutations
  */
 
-const handler = (req: NextRequest) => {
+const handler = async (req: NextRequest) => {
   return fetchRequestHandler({
     endpoint: '/api/trpc',
     req,

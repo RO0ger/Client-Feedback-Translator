@@ -5,10 +5,10 @@ import { updatePatterns } from '@/lib/patterns';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const translationId = params.id;
+    const { id: translationId } = await params;
     if (!translationId) {
       return NextResponse.json({ error: "Translation ID is required" }, { status: 400 });
     }
