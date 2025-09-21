@@ -1,25 +1,43 @@
-import { drizzle } from 'drizzle-orm/postgres-js'
-import postgres from 'postgres'
-import * as schema from './schema'
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import * as schema from './schema';
 
-// Create postgres client optimized for Supabase Session Pooler
-const client = postgres(process.env.DATABASE_URL!, {
-  max: 3, // Allow more connections for better performance
-  idle_timeout: 20,
-  max_lifetime: 60 * 30,
-  connect_timeout: 30, // Increased timeout for better reliability
-  socket_timeout: 60, // Increased socket timeout
-  prepare: false, // Disable prepared statements for NextAuth compatibility
-  transform: undefined,
-  onnotice: () => {}, // Suppress notices
-  ssl: 'require', // Session pooler requires SSL
-  // Enhanced debugging in development
-  debug: process.env.NODE_ENV === 'development' ? console.log : false,
-})
+// Declare a global variable to hold the cached database client
+declare global {
+  // eslint-disable-next-line no-var
+  var client: postgres.Sql | undefined;
+}
 
-// Initialize Drizzle with schema
-export const db = drizzle(client, { schema })
+let client: postgres.Sql;
 
-// Export types for convenience
-export type Database = typeof db
-export * from './schema'
+// In development, use the global variable to preserve the client across hot reloads.
+// In production, create a new client for each serverless function invocation.
+if (process.env.NODE_ENV === 'production') {
+  client = postgres(process.env.DATABASE_URL!, {
+    max: 3,
+    idle_timeout: 20,
+    max_lifetime: 60 * 30,
+    connect_timeout: 30,
+    socket_timeout: 60,
+    prepare: false,
+    ssl: 'require',
+  });
+} else {
+  if (!global.client) {
+    global.client = postgres(process.env.DATABASE_URL!, {
+      max: 3,
+      idle_timeout: 20,
+      max_lifetime: 60 * 30,
+      connect_timeout: 30,
+      socket_timeout: 60,
+      prepare: false,
+      ssl: 'require',
+      debug: true, // Enable debug logging in development
+    });
+  }
+  client = global.client;
+}
+
+export const db = drizzle(client, { schema });
+export type Database = typeof db;
+export * from './schema';
