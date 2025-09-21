@@ -20,6 +20,8 @@ interface FileUploadProps {
   disabled?: boolean;
   className?: string;
   schema: z.ZodType<any, any>;
+  onFileUpload?: (fileData: { file: File; content: string; fileName: string; fileSize: number }) => void;
+  maxSize?: number;
 }
 
 export function FileUpload({
@@ -27,6 +29,8 @@ export function FileUpload({
   disabled = false,
   className,
   schema,
+  onFileUpload,
+  maxSize,
 }: FileUploadProps) {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -52,7 +56,7 @@ export function FileUpload({
         
         if (firstError) {
           if (firstError.code === 'file-too-large') {
-            message = 'File must be less than 10MB.';
+            message = `File must be less than ${maxSize ? maxSize / (1024 * 1024) : 10}MB.`;
           } else if (firstError.code === 'file-invalid-type') {
             // Use the specific schema error message for file type validation
             message = 'File type must be .js, .jsx, .ts, or .tsx.';
@@ -95,6 +99,9 @@ export function FileUpload({
 
         setValue(name, fileData, { shouldValidate: true });
         setUploadedFile(file);
+        if (onFileUpload) {
+          onFileUpload(fileData);
+        }
       } catch (error) {
         setError(name, {
           type: 'manual',
@@ -104,14 +111,14 @@ export function FileUpload({
         setIsProcessing(false);
       }
     },
-    [disabled, name, setError, clearErrors, setValue, schema]
+    [disabled, name, setError, clearErrors, setValue, schema, onFileUpload, maxSize]
   );
 
   const { getRootProps, getInputProps, isDragActive, isDragReject } =
     useDropzone({
       onDrop,
       // Remove accept to allow all files - we'll validate with schema instead
-      maxSize: 10 * 1024 * 1024, // 10MB
+      maxSize: maxSize || (10 * 1024 * 1024), // Default to 10MB if not provided
       multiple: false,
       disabled: disabled || isProcessing,
       // Validate files manually in onDrop instead of using accept
@@ -140,6 +147,7 @@ export function FileUpload({
     <div className={cn('w-full', className)}>
       <motion.div
         {...getRootProps()}
+        data-testid="dropzone"
         className={cn(
           'relative cursor-pointer rounded-2xl border-2 border-dashed p-6 text-center transition-all duration-200 backdrop-blur-sm md:p-8',
           {
@@ -155,7 +163,7 @@ export function FileUpload({
         whileHover={{ scale: 1.01 }}
         whileTap={{ scale: 0.99 }}
       >
-        <input {...getInputProps()} data-testid="file-upload-input" />
+        <input {...getInputProps()} data-testid="file-upload-input" disabled={disabled || isProcessing} />
         <AnimatePresence mode="wait">
           {errorMessage ? (
             <motion.div
