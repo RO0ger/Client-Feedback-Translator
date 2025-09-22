@@ -22,28 +22,28 @@ const typeIcons = {
 
 const typeColors = {
   css: {
-    bg: 'bg-blue-50',
-    border: 'border-blue-100',
-    text: 'text-blue-600',
-    textHeader: 'text-blue-900',
+    bg: 'bg-gradient-to-r from-blue-500/20 to-blue-600/10',
+    border: 'border-blue-400/30',
+    text: 'text-blue-300',
+    textHeader: 'text-blue-100',
   },
   animation: {
-    bg: 'bg-purple-50',
-    border: 'border-purple-100',
-    text: 'text-purple-600',
-    textHeader: 'text-purple-900',
+    bg: 'bg-gradient-to-r from-purple-500/20 to-purple-600/10',
+    border: 'border-purple-400/30',
+    text: 'text-purple-300',
+    textHeader: 'text-purple-100',
   },
   props: {
-    bg: 'bg-green-50',
-    border: 'border-green-100',
-    text: 'text-green-600',
-    textHeader: 'text-green-900',
+    bg: 'bg-gradient-to-r from-green-500/20 to-green-600/10',
+    border: 'border-green-400/30',
+    text: 'text-green-300',
+    textHeader: 'text-green-100',
   },
   structure: {
-    bg: 'bg-orange-50',
-    border: 'border-orange-100',
-    text: 'text-orange-600',
-    textHeader: 'text-orange-900',
+    bg: 'bg-gradient-to-r from-orange-500/20 to-orange-600/10',
+    border: 'border-orange-400/30',
+    text: 'text-orange-300',
+    textHeader: 'text-orange-100',
   },
 };
 
@@ -62,32 +62,32 @@ export function CodeDiff({ before, after, language, description, type }: CodeDif
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="border border-white/20 rounded-2xl overflow-hidden bg-white/60 backdrop-blur-sm shadow-lg"
+      className="rounded-3xl modern-glass premium-shadow overflow-hidden"
     >
       <div className={`px-6 py-4 ${color.bg} border-b ${color.border}`}>
         <div className="flex items-center gap-3">
           <Icon className={`h-5 w-5 ${color.text}`} />
           <p className={`text-sm font-medium ${color.textHeader} capitalize`}>{type}</p>
         </div>
-        <p className="text-sm text-gray-700 mt-2">{description}</p>
+        <p className="text-sm text-gradient-secondary mt-2 font-inter">{description}</p>
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
+
+      <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-600/30">
         {/* Before */}
         <div className="relative">
-          <div className="flex items-center justify-between px-4 py-3 bg-red-50/50 border-b border-red-100">
-            <span className="text-sm font-medium text-red-800 flex items-center gap-2">
+          <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-red-500/20 to-red-600/10 border-b border-red-400/30">
+            <span className="text-sm font-medium text-red-300 flex items-center gap-2">
               Before
             </span>
             <button
               onClick={() => handleCopy(before, 0)}
-              className="p-1.5 hover:bg-red-100 rounded transition-colors"
+              className="p-1.5 hover:bg-red-400/20 rounded transition-colors"
               title="Copy code"
             >
               {copiedIndex === 0 ? (
-                <Check className="h-4 w-4 text-green-600" />
+                <Check className="h-4 w-4 text-green-400" />
               ) : (
-                <Copy className="h-4 w-4 text-red-600" />
+                <Copy className="h-4 w-4 text-red-300" />
               )}
             </button>
           </div>
@@ -97,7 +97,7 @@ export function CodeDiff({ before, after, language, description, type }: CodeDif
               style={oneDark}
               customStyle={{
                 margin: 0,
-                background: 'rgb(254, 242, 242)',
+                background: 'rgb(30, 30, 30)',
                 fontSize: '13px',
                 lineHeight: '1.4',
               }}
@@ -110,19 +110,19 @@ export function CodeDiff({ before, after, language, description, type }: CodeDif
         
         {/* After */}
         <div className="relative">
-          <div className="flex items-center justify-between px-4 py-3 bg-green-50/50 border-b border-green-100">
-            <span className="text-sm font-medium text-green-800 flex items-center gap-2">
+          <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-green-500/20 to-green-600/10 border-b border-green-400/30">
+            <span className="text-sm font-medium text-green-300 flex items-center gap-2">
               After
             </span>
             <button
               onClick={() => handleCopy(after, 1)}
-              className="p-1.5 hover:bg-green-100 rounded transition-colors"
+              className="p-1.5 hover:bg-green-400/20 rounded transition-colors"
               title="Copy code"
             >
               {copiedIndex === 1 ? (
-                <Check className="h-4 w-4 text-green-600" />
+                <Check className="h-4 w-4 text-green-400" />
               ) : (
-                <Copy className="h-4 w-4 text-green-600" />
+                <Copy className="h-4 w-4 text-green-300" />
               )}
             </button>
           </div>
@@ -132,7 +132,7 @@ export function CodeDiff({ before, after, language, description, type }: CodeDif
               style={oneDark}
               customStyle={{
                 margin: 0,
-                background: 'rgb(240, 253, 244)',
+                background: 'rgb(30, 30, 30)',
                 fontSize: '13px',
                 lineHeight: '1.4',
               }}

@@ -149,14 +149,14 @@ export function FileUpload({
         {...getRootProps()}
         data-testid="dropzone"
         className={cn(
-          'relative cursor-pointer rounded-2xl border-2 border-dashed p-6 text-center transition-all duration-200 backdrop-blur-sm md:p-8',
+          'relative cursor-pointer rounded-3xl border-2 border-dashed p-8 text-center transition-all duration-300 backdrop-blur-sm md:p-10 premium-shadow',
           {
-            'border-blue-400 bg-blue-50/50 scale-[1.02]':
+            'border-blue-400 bg-gradient-to-br from-blue-50/60 to-purple-50/60 scale-[1.02] shadow-blue-200/50':
               isDragActive && !isDragReject && !disabled,
-            'border-red-400 bg-red-50/50': isDragReject || !!errorMessage,
-            'border-green-400 bg-green-50/50': hasFile && !errorMessage,
+            'border-red-400 bg-gradient-to-br from-red-50/60 to-pink-50/60 shadow-red-200/50': isDragReject || !!errorMessage,
+            'border-green-400 bg-gradient-to-br from-green-50/60 to-emerald-50/60 shadow-green-200/50': hasFile && !errorMessage,
             'cursor-not-allowed bg-gray-100/50 opacity-50': disabled,
-            'border-gray-300 bg-white/50 hover:border-gray-400 hover:bg-gray-50/50':
+            'border-gray-300 bg-white/60 hover:border-blue-400 hover:bg-gradient-to-br hover:from-blue-50/40 hover:to-purple-50/40 hover:shadow-blue-100/30':
               !hasFile && !errorMessage && !isDragActive,
           }
         )}
@@ -216,10 +216,10 @@ export function FileUpload({
                   e.stopPropagation();
                   removeFile();
                 }}
-                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-3 hover:bg-red-100 rounded-full transition-all duration-200 hover:scale-110 group"
                 disabled={disabled}
               >
-                <X className="h-6 w-6 text-gray-500" />
+                <X className="h-6 w-6 text-gray-500 group-hover:text-red-500" />
               </button>
             </motion.div>
           ) : (

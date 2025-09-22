@@ -25,10 +25,10 @@ export function FeedbackForm({
         <Textarea
           {...register('feedback')}
           placeholder="e.g., 'Make the button more vibrant and add a hover effect.'"
-          className={`w-full p-3 border rounded-lg resize-none ${
+          className={`w-full p-4 border rounded-xl resize-none backdrop-blur-sm transition-all duration-200 ${
             errors.feedback
-              ? 'border-red-500 focus:border-red-500'
-              : 'border-gray-300 focus:border-blue-500'
+              ? 'border-red-400 focus:border-red-500 bg-red-50/50'
+              : 'border-gray-300 focus:border-blue-400 bg-white/60 hover:bg-white/70 focus:bg-white/80'
           }`}
           rows={6}
           disabled={disabled}
@@ -43,7 +43,7 @@ export function FeedbackForm({
       <Button
         type="submit"
         disabled={disabled}
-        className="w-full py-3 px-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full py-4 px-6 gradient-button text-white font-semibold rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 focus:ring-offset-transparent disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none transition-all duration-300"
       >
         {isLoading ? (
           <>
