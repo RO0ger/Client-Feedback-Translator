@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import { z } from 'zod';
-import { AiTranslateResponse, aiTranslationResponseSchema } from './types';
+import { AiTranslateResponse, aiTranslationResponseSchema } from '@/types';
 
 // Zod schema for validating the AI's response
 const aiResponseSchema = z.object({

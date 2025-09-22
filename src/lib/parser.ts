@@ -1,7 +1,7 @@
 import * as babelParser from '@babel/parser';
 import traverse, { NodePath } from '@babel/traverse';
 import { ExportDefaultDeclaration, VariableDeclarator } from '@babel/types';
-import { ParsedComponent } from './types';
+import { ParsedComponent } from '@/types';
 
 export class ParserError extends Error {
   constructor(message: string) {

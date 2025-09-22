@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 import { extractPatternFromFeedback } from './gemini';
-import type { Change } from './types';
+import type { Change } from '@/types';
 
 /**
  * Updates the feedback_patterns table based on a highly-rated translation.
