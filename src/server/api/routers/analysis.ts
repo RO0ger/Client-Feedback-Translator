@@ -4,6 +4,7 @@ import { analyses } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 import { translateFeedback } from '@/lib/gemini';
+import { inngest } from '@/lib/inngest';
 
 const createAnalysisSchema = z.object({
   fileName: z.string().min(1),
@@ -28,38 +29,43 @@ export const analysisRouter = createTRPCRouter({
       });
 
       try {
-        // AI analysis with Gemini
-        const aiResponse = await translateFeedback(
-          input.fileName,
-          input.originalContent,
-          input.feedback
-        );
-
+        // Create analysis record immediately with PENDING status
         const [analysis] = await ctx.db.insert(analyses).values({
           ...input,
-          interpretation: aiResponse.interpretation,
-          suggestions: JSON.stringify(aiResponse.actionable_changes), // Convert array to JSON string
-          confidence: Math.round(aiResponse.confidence * 100), // Convert 0-1 to 0-100
-          reasoning: aiResponse.reasoning,
+          status: 'PENDING',
           userId: ctx.session.user.id,
         }).returning();
 
-        // Log on Success
+        // Send to Inngest for background processing
+        await inngest.send({
+          name: 'analysis/process',
+          data: {
+            analysisId: analysis.id,
+            userId: ctx.session.user.id,
+            fileName: input.fileName,
+            originalContent: input.originalContent,
+            feedback: input.feedback,
+          },
+        });
+
+        // Log on Success (immediate creation)
         const latency = Date.now() - startTime;
-        console.log('✅ AI Analysis completed successfully', {
+        console.log('✅ Analysis record created and queued for processing', {
           analysisId: analysis.id,
           userId: ctx.session.user.id,
-          confidenceScore: aiResponse.confidence,
-          suggestionsCount: aiResponse.actionable_changes.length,
+          status: 'PENDING',
           latencyMs: latency,
           timestamp: new Date().toISOString(),
         });
 
-        return analysis;
+        return {
+          ...analysis,
+          suggestions: null, // No suggestions yet, will be populated by background worker
+        };
       } catch (error) {
         // Log on Failure
         const latency = Date.now() - startTime;
-        console.error('❌ AI Analysis failed', {
+        console.error('❌ Analysis creation failed', {
           userId: ctx.session.user.id,
           fileName: input.fileName,
           error: error instanceof Error ? error.message : 'Unknown error',
@@ -70,7 +76,7 @@ export const analysisRouter = createTRPCRouter({
 
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to analyze component. Please try again.',
+          message: 'Failed to create analysis. Please try again.',
         });
       }
     }),
@@ -86,14 +92,47 @@ export const analysisRouter = createTRPCRouter({
           eq(analyses.isDeleted, false)
         ))
         .limit(1);
-      
+
       if (!analysis) {
         throw new TRPCError({ code: 'NOT_FOUND' });
       }
-      
+
       return {
         ...analysis,
-        suggestions: JSON.parse(analysis.suggestions),
+        suggestions: analysis.suggestions ? JSON.parse(analysis.suggestions) : null,
+      };
+    }),
+
+  getStatus: protectedProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .query(async ({ input, ctx }) => {
+      const [analysis] = await ctx.db.select({
+        id: analyses.id,
+        status: analyses.status,
+        updatedAt: analyses.updatedAt,
+        createdAt: analyses.createdAt,
+      })
+        .from(analyses)
+        .where(and(
+          eq(analyses.id, input.id),
+          eq(analyses.userId, ctx.session.user.id),
+          eq(analyses.isDeleted, false)
+        ))
+        .limit(1);
+
+      if (!analysis) {
+        throw new TRPCError({ code: 'NOT_FOUND' });
+      }
+
+      return {
+        id: analysis.id,
+        status: analysis.status,
+        isComplete: analysis.status === 'COMPLETE',
+        isFailed: analysis.status === 'FAILED',
+        isPending: analysis.status === 'PENDING',
+        isProcessing: analysis.status === 'PROCESSING',
+        createdAt: analysis.createdAt,
+        updatedAt: analysis.updatedAt,
       };
     }),
 });
