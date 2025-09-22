@@ -1,186 +1,260 @@
-# 🚀 Client Feedback Translator
+# Client Feedback Translator
 
-## Project Overview
+[![Build Status](https://img.shields.io/github/actions/workflow/status/your-username/client-feedback-translator/ci.yml)](https://github.com/your-username/client-feedback-translator/actions)
+[![Test Coverage](https://img.shields.io/codecov/c/github/your-username/client-feedback-translator)](https://codecov.io/gh/your-username/client-feedback-translator)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Next.js](https://img.shields.io/badge/Next.js-15.5.3-black)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.5+-blue.svg)](https://www.typescriptlang.org/)
 
-The Client Feedback Translator is a cutting-edge web application designed to help developers and product managers quickly process and understand client feedback. Leveraging advanced AI, specifically **Gemini 2.5 Flash**, it translates raw, often unstructured, client comments into actionable technical changes for code components. This tool streamlines the feedback loop, ensuring clarity and efficiency in development cycles.
+A production-ready web application that uses AI to translate client feedback into actionable code changes. Built with Next.js 15, React 19, and TypeScript.
 
-## ✨ Features
+## Features
 
-*   **AI-Powered Feedback Interpretation**: Translates natural language client feedback into precise, actionable code changes.
-*   **Code Component Analysis**: Understands and analyzes React (functional and class components), Tailwind CSS, inline styles, CSS Modules, and Styled Components.
-*   **Interactive Code Comparison**: Displays `before` and `after` code snippets for proposed changes, aiding review.
-*   **Feedback History**: Stores a history of translations, allowing users to revisit past feedback and generated solutions.
-*   **User Rating System**: Allows users to rate the quality of AI-generated translations, improving future iterations.
-*   **Secure File Uploads**: Supports `.jsx` and `.tsx` file uploads with robust validation and security measures.
-*   **Responsive UI**: Built with `shadcn/ui` and `Tailwind CSS v4` for a modern, mobile-first experience.
+- **AI-Powered Analysis**: Translates natural language feedback into precise code modifications using Gemini 2.5 Flash
+- **Multi-Framework Support**: Analyzes React components, Tailwind CSS, CSS Modules, and Styled Components
+- **Interactive Code Diff**: Side-by-side comparison of proposed changes with explanations
+- **Translation History**: Persistent storage of all feedback translations with user ratings
+- **Secure File Upload**: Drag-and-drop file upload with comprehensive validation
+- **Modern UI**: Responsive design built with shadcn/ui and Tailwind CSS v4
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-This project is built with the latest stable technologies as of August 2025:
+- **Frontend**: Next.js 15 (App Router), React 19, TypeScript 5.5+
+- **Styling**: Tailwind CSS v4, shadcn/ui
+- **Backend**: tRPC for type-safe APIs, NextAuth.js v5 for authentication
+- **Database**: Supabase with PostgreSQL, Drizzle ORM
+- **AI**: Google Gemini 2.5 Flash
+- **Testing**: Vitest, Playwright, Testing Library
+- **Development**: ESLint, Prettier, TypeScript strict mode
 
-*   **Frontend**:
-    *   **Next.js 15** (App Router)
-    *   **React 19**
-    *   **TypeScript 5.5+**
-    *   **Tailwind CSS v4**
-    *   **shadcn/ui** (Component Library)
-*   **Backend / AI**:
-    *   **Node.js 20+**
-    *   **Gemini 2.5 Flash** (via `@google/generative-ai` SDK)
-*   **Database**:
-    *   **Supabase** (Latest 2025 version, 2.45.0+)
-*   **Development Tools**:
-    *   ESLint, Prettier
-    *   Zod (for runtime validation)
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 client-feedback-translator/
-├── app/                  # Next.js App Router: pages, layouts, API routes
-│   ├── globals.css       # Global styles
-│   ├── layout.tsx        # Root layout
-│   ├── page.tsx          # Home page
-│   └── api/              # API Routes
-│       ├── translate/route.ts       # Main translation API
-│       └── translations/route.ts    # History and rating API
-├── components/           # Reusable React components
-│   ├── ui/               # shadcn/ui components
-│   ├── FileUpload.tsx    # Component for handling file uploads
-│   ├── FeedbackInput.tsx # Component for inputting feedback
-│   ├── ResultsDisplay.tsx# Displays AI-generated results
-│   └── CodeComparison.tsx# Shows before/after code differences
-├── lib/                  # Utility functions and configurations
-│   ├── supabase.ts       # Supabase client setup
-│   ├── gemini.ts         # Gemini AI client setup
-│   ├── parser.ts         # Code parsing logic
-│   └── types.ts          # TypeScript type definitions
-└── utils/                # General utilities
-    ├── validation.ts     # Zod schemas for validation
-    └── cn.ts             # Tailwind CSS class merging utility
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── api/               # API routes (tRPC, NextAuth)
+│   │   ├── dashboard/         # Dashboard page
+│   │   ├── results/           # Results pages
+│   │   ├── globals.css        # Global styles
+│   │   ├── layout.tsx         # Root layout
+│   │   └── page.tsx           # Home page
+│   ├── components/            # UI components
+│   │   ├── ui/               # shadcn/ui components
+│   │   ├── forms/            # Form components
+│   │   ├── animations/       # Motion components
+│   │   ├── upload/           # File upload components
+│   │   ├── history/          # History components
+│   │   └── results/          # Results display components
+│   ├── server/               # Backend logic
+│   │   ├── api/             # tRPC procedures
+│   │   └── trpc.ts          # tRPC configuration
+│   ├── lib/                  # Business logic
+│   │   ├── db/              # Database schema & client
+│   │   ├── validations/     # Zod validation schemas
+│   │   ├── gemini.ts        # AI client setup
+│   │   ├── parser.ts        # Code parsing logic
+│   │   └── utils.ts         # Utility functions
+│   ├── test/                # Test utilities
+│   │   ├── fixtures/        # Test data
+│   │   ├── integration/     # Integration tests
+│   │   ├── mocks/           # API mocks
+│   │   └── utils/           # Test helpers
+│   └── utils/               # Shared utilities
+│       └── trpc.ts          # tRPC client
+├── public/                  # Static assets
+├── e2e/                     # End-to-end tests
+└── docs/                    # Documentation
 ```
 
-## 🚀 Getting Started
-
-Follow these steps to set up and run the project locally.
+## Installation
 
 ### Prerequisites
 
-*   Node.js 20+
-*   npm or yarn (npm is recommended)
-*   A Google Cloud project with the Gemini API enabled and an API Key.
-*   A Supabase project with its URL and Anon Key.
+- Node.js 20+
+- npm or yarn
+- Google Cloud project with Gemini API access
+- Supabase project
 
-### 1. Clone the repository
+### Quick Start
 
 ```bash
+# Clone the repository
 git clone https://github.com/your-username/client-feedback-translator.git
 cd client-feedback-translator
-```
 
-### 2. Install Dependencies
-
-```bash
+# Install dependencies
 npm install
-# or
-yarn install
+
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your API keys
+
+# Run database migrations
+npm run db:push
+
+# Start development server
+npm run dev
 ```
 
-### 3. Environment Variables
+Visit [http://localhost:3000](http://localhost:3000) to view the application.
 
-Create a `.env.local` file in the root of your project and add the following environment variables:
+### Environment Variables
 
-```
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-GEMINI_API_KEY=your_gemini_api_key
-```
-
-Replace the placeholder values with your actual Supabase and Gemini API keys.
-
-### 4. Database Setup (Supabase)
-
-Ensure your Supabase project has the `translations` table set up with the following schema:
-
-```sql
-CREATE TABLE translations (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  original_feedback TEXT NOT NULL,
-  component_code TEXT NOT NULL,
-  generated_changes JSONB NOT NULL,
-  confidence_score DECIMAL(3,2),
-  user_rating INTEGER,
-  created_at TIMESTAMP DEFAULT NOW()
-);
-
--- Performance indexes
-CREATE INDEX idx_translations_created_at ON translations(created_at DESC);
-CREATE INDEX idx_translations_confidence ON translations(confidence_score DESC);
-```
-
-### 5. Run the Development Server
+Create a `.env.local` file with the following variables:
 
 ```bash
-npm run dev
-# or
-yarn dev
+# Database
+DATABASE_URL="postgresql://user:pass@host:5432/db"
+NEXT_PUBLIC_SUPABASE_URL="your_supabase_url"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="your_supabase_anon_key"
+SUPABASE_SERVICE_ROLE_KEY="your_supabase_service_role_key"
+
+# AI Integration
+GEMINI_API_KEY="your_gemini_api_key"
+
+# Authentication (NextAuth.js)
+AUTH_SECRET="your-auth-secret"
+NEXTAUTH_URL="http://localhost:3000"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+## Development
 
-## 🌐 API Endpoints
+### Available Scripts
 
-The application exposes the following API endpoints:
+- `npm run dev` - Start development server
+- `npm run build` - Create production build
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run type-check` - Run TypeScript checks
+- `npm test` - Run test suite
+- `npm run test:ui` - Run tests with UI
+- `npm run test:coverage` - Run tests with coverage
+- `npm run db:generate` - Generate database schema
+- `npm run db:push` - Push database schema
+- `npm run db:studio` - Open Drizzle Studio
 
-*   **`POST /api/translate`**:
-    *   **Description**: Processes client feedback and component code to generate AI-driven changes.
-    *   **Request Body**:
-        ```json
-        {
-          "feedback": "string (min: 1, max: 500)",
-          "componentCode": "string (min: 1, max: 50000)"
-        }
-        ```
-    *   **Response**: Returns a JSON object with `success: true` and `data` containing the AI's interpretation and proposed changes, or an error.
-    *   **Expected AI Response Structure**:
-        ```typescript
-        interface AIResponse {
-          interpretation: string;
-          changes: {
-            type: 'css' | 'props' | 'structure' | 'animation';
-            before: string;
-            after: string;
-            explanation: string;
-          }[];
-          confidence: number; // 0.0 - 1.0
-          reasoning: string;
-        }
-        ```
-*   **`GET /api/translations`**:
-    *   **Description**: Retrieves a list of all past translation entries.
-*   **`POST /api/translations/[id]/rating`**:
-    *   **Description**: Allows users to rate a specific translation.
-    *   **Request Body**:
-        ```json
-        {
-          "rating": "integer (1-5)"
-        }
-        ```
+### Database Setup
 
-## 🤝 Contributing
+The project uses Drizzle ORM with PostgreSQL. Run the following to set up your database:
 
-We welcome contributions! Please follow these steps to contribute:
+```bash
+# Generate migrations
+npm run db:generate
 
-1.  Fork the repository.
-2.  Create a new branch (`git checkout -b feature/your-feature-name`).
-3.  Make your changes.
-4.  Commit your changes (`git commit -m 'feat: Add new feature'`).
-5.  Push to the branch (`git push origin feature/your-feature-name`).
-6.  Open a Pull Request.
+# Push schema to database
+npm run db:push
 
-Please ensure your code adheres to the project's [Development Rules](temp_docs/rules.mdc) (e.g., TypeScript strict mode, ESLint, Prettier, unit tests).
+# Open database studio (optional)
+npm run db:studio
+```
+
+## API Reference
+
+### tRPC Procedures
+
+The application uses tRPC for type-safe API procedures. All procedures are defined in `src/server/api/routers/`.
+
+#### Translation API
+
+**Create Translation**
+```typescript
+// Input
+{
+  feedback: string; // min: 1, max: 500
+  componentCode: string; // min: 1, max: 50000
+}
+
+// Response
+{
+  id: string;
+  interpretation: string;
+  changes: Array<{
+    type: 'css' | 'props' | 'structure' | 'animation';
+    before: string;
+    after: string;
+    explanation: string;
+  }>;
+  confidence: number; // 0.0 - 1.0
+  reasoning: string;
+}
+```
+
+**Get Translation History** (Infinite Query)
+```typescript
+// Input
+{
+  limit?: number; // default: 10, max: 100
+  cursor?: number;
+}
+
+// Response
+{
+  items: Array<{
+    id: string;
+    originalFeedback: string;
+    componentCode: string;
+    generatedChanges: any;
+    confidenceScore: number;
+    userRating?: number;
+    createdAt: Date;
+  }>;
+  nextCursor?: number;
+}
+```
+
+**Rate Translation**
+```typescript
+// Input
+{
+  rating: number; // 1-5
+}
+
+// Response
+{
+  success: boolean;
+}
+```
+
+## Contributing
+
+We welcome contributions! Please follow these guidelines:
+
+### Development Setup
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature-name`
+3. Install dependencies: `npm install`
+4. Make your changes
+5. Add tests for new functionality
+6. Ensure all tests pass: `npm test`
+7. Commit with conventional commits: `git commit -m 'feat: add new feature'`
+8. Push to your branch: `git push origin feature/your-feature-name`
+9. Open a Pull Request
+
+### Code Standards
+
+- TypeScript strict mode enabled
+- ESLint and Prettier configuration enforced
+- Unit tests required for new features
+- Follow existing code patterns and conventions
+- Update documentation for API changes
+
+### Testing Requirements
+
+- Unit tests: `npm run test`
+- Type checking: `npm run type-check`
+- Linting: `npm run lint`
+- All CI checks must pass
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a list of changes and version history.
 
 ---
 
-Made with ❤️ by Nasif
+Built with Next.js, React, and TypeScript.
