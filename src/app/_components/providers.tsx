@@ -11,8 +11,13 @@ function getBaseUrl() {
   if (typeof window !== 'undefined') {
     return ''
   }
-  // TODO: Make this configurable
-  return `http://localhost:${process.env.PORT ?? 3000}`
+
+  // Use Next.js standard environment variables
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`
+  }
+
+  return `http://localhost:3000`
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
