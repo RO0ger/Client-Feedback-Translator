@@ -33,71 +33,79 @@ A production-ready web application that uses AI to translate client feedback int
 client-feedback-translator/
 ├── src/
 │   ├── app/                    # Next.js App Router
-│   │   ├── api/               # API routes (tRPC, NextAuth)
-│   │   ├── dashboard/         # Dashboard page
-│   │   ├── results/           # Results pages
-│   │   ├── globals.css        # Global styles
-│   │   ├── layout.tsx         # Root layout
-│   │   └── page.tsx           # Home page
-│   ├── components/            # UI components
-│   │   ├── ui/               # shadcn/ui components
-│   │   ├── forms/            # Form components
-│   │   ├── animations/       # Motion components
-│   │   ├── upload/           # File upload components
-│   │   ├── history/          # History components
-│   │   └── results/          # Results display components
-│   ├── server/               # Backend logic
-│   │   ├── api/             # tRPC procedures
-│   │   └── trpc.ts          # tRPC configuration
-│   ├── lib/                  # Business logic
-│   │   ├── db/              # Database schema & client
-│   │   ├── validations/     # Zod validation schemas
-│   │   ├── gemini.ts        # AI client setup
-│   │   ├── parser.ts        # Code parsing logic
-│   │   └── utils.ts         # Utility functions
-│   ├── test/                # Test utilities
-│   │   ├── fixtures/        # Test data
-│   │   ├── integration/     # Integration tests
-│   │   ├── mocks/           # API mocks
-│   │   └── utils/           # Test helpers
-│   └── utils/               # Shared utilities
-│       └── trpc.ts          # tRPC client
-├── public/                  # Static assets
-├── e2e/                     # End-to-end tests
-└── docs/                    # Documentation
+│   │   ├── (auth)/           # Authentication routes
+│   │   │   └── auth/         # NextAuth configuration
+│   │   ├── (dashboard)/      # Dashboard routes
+│   │   │   └── dashboard/    # Dashboard page
+│   │   ├── api/              # API routes
+│   │   │   ├── translate/    # Translation API
+│   │   │   ├── trpc/         # tRPC endpoints
+│   │   │   └── translations/ # Translation history
+│   │   ├── results/          # Results pages
+│   │   ├── _components/      # Layout providers
+│   │   ├── globals.css       # Global styles
+│   │   ├── layout.tsx        # Root layout
+│   │   └── page.tsx          # Home page
+│   ├── components/           # UI components
+│   │   ├── ui/              # shadcn/ui components
+│   │   ├── forms/           # Form components
+│   │   ├── animations/      # Motion components
+│   │   ├── upload/          # File upload components
+│   │   ├── history/         # History components
+│   │   └── results/         # Results display components
+│   ├── server/              # Backend logic
+│   │   ├── api/            # tRPC procedures
+│   │   └── trpc.ts         # tRPC configuration
+│   ├── lib/                 # Business logic
+│   │   ├── db/             # Database schema & client
+│   │   ├── validations/    # Zod validation schemas
+│   │   ├── gemini.ts       # AI client setup
+│   │   ├── parser.ts       # Code parsing logic
+│   │   ├── patterns.ts     # AI pattern learning
+│   │   ├── supabase.ts     # Database client
+│   │   └── utils.ts        # Utility functions
+│   ├── test/               # Test utilities
+│   │   ├── fixtures/       # Static test data
+│   │   ├── helpers/        # 🆕 Test helper utilities & factories
+│   │   ├── integration/    # Integration tests
+│   │   ├── mocks/          # API mocks
+│   │   └── utils/          # Test utilities (re-exports helpers)
+│   ├── types/              # TypeScript definitions
+│   └── utils/              # Shared utilities
+│       └── trpc.ts         # tRPC client
+├── public/                 # Static assets
+├── e2e/                    # End-to-end tests
+├── docs/                   # Documentation
+│   ├── ARCHITECTURE.md     # Design decisions & rationale
+│   └── CONTRIBUTING.md     # Development guide
+└── .gitignore              # Git ignore patterns
 ```
+
+## Quick Start
+
+Get up and running in 3 simple commands:
+
+```bash
+# 1. Clone and install
+git clone https://github.com/your-username/client-feedback-translator.git
+cd client-feedback-translator && npm install
+
+# 2. Set up environment variables
+# Create .env.local file with your actual API keys
+
+# 3. Start development
+npm run dev
+```
+
+Visit [http://localhost:3000](http://localhost:3000) to view the application.
 
 ## Installation
 
 ### Prerequisites
 
 - Node.js 20+
-- npm or yarn
 - Google Cloud project with Gemini API access
 - Supabase project
-
-### Quick Start
-
-```bash
-# Clone the repository
-git clone https://github.com/your-username/client-feedback-translator.git
-cd client-feedback-translator
-
-# Install dependencies
-npm install
-
-# Set up environment variables
-cp .env.example .env.local
-# Edit .env.local with your API keys
-
-# Run database migrations
-npm run db:push
-
-# Start development server
-npm run dev
-```
-
-Visit [http://localhost:3000](http://localhost:3000) to view the application.
 
 ### Environment Variables
 
@@ -158,6 +166,7 @@ The application uses tRPC for type-safe API procedures. All procedures are defin
 #### Translation API
 
 **Create Translation**
+
 ```typescript
 // Input
 {
@@ -170,7 +179,7 @@ The application uses tRPC for type-safe API procedures. All procedures are defin
   id: string;
   interpretation: string;
   changes: Array<{
-    type: 'css' | 'props' | 'structure' | 'animation';
+    type: "css" | "props" | "structure" | "animation";
     before: string;
     after: string;
     explanation: string;
@@ -181,6 +190,7 @@ The application uses tRPC for type-safe API procedures. All procedures are defin
 ```
 
 **Get Translation History** (Infinite Query)
+
 ```typescript
 // Input
 {
@@ -204,6 +214,7 @@ The application uses tRPC for type-safe API procedures. All procedures are defin
 ```
 
 **Rate Translation**
+
 ```typescript
 // Input
 {
@@ -218,34 +229,9 @@ The application uses tRPC for type-safe API procedures. All procedures are defin
 
 ## Contributing
 
-We welcome contributions! Please follow these guidelines:
+I welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
-### Development Setup
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature-name`
-3. Install dependencies: `npm install`
-4. Make your changes
-5. Add tests for new functionality
-6. Ensure all tests pass: `npm test`
-7. Commit with conventional commits: `git commit -m 'feat: add new feature'`
-8. Push to your branch: `git push origin feature/your-feature-name`
-9. Open a Pull Request
-
-### Code Standards
-
-- TypeScript strict mode enabled
-- ESLint and Prettier configuration enforced
-- Unit tests required for new features
-- Follow existing code patterns and conventions
-- Update documentation for API changes
-
-### Testing Requirements
-
-- Unit tests: `npm run test`
-- Type checking: `npm run type-check`
-- Linting: `npm run lint`
-- All CI checks must pass
+For a high-level overview of the architecture and design decisions, see [ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## License
 
