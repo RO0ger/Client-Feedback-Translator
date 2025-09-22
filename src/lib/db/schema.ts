@@ -87,6 +87,7 @@ export const analyses = pgTable('analyses', {
   interpretation: text('interpretation').notNull(),
   suggestions: text('suggestions').notNull(), // JSON string with diffs
   confidence: integer('confidence').notNull(),
+  reasoning: text('reasoning').notNull(), // AI reasoning for debugging and transparency
   createdAt: timestamp('created_at').defaultNow().notNull(),
   // Soft delete support
   isDeleted: boolean('is_deleted').default(false).notNull(),

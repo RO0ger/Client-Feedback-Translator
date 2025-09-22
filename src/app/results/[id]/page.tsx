@@ -21,11 +21,11 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
     notFound();
   }
 
-  const suggestions = analysis.suggestions as Array<{
-    description: string;
+  const suggestions = (analysis.suggestions as any) as Array<{
+    type: "css" | "animation" | "props" | "structure";
     before: string;
     after: string;
-    type: "css" | "animation" | "props" | "structure";
+    explanation: string;
   }>;
 
   return (
@@ -92,7 +92,7 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
                   before={suggestion.before}
                   after={suggestion.after}
                   language="typescript"
-                  description={suggestion.description}
+                  description={suggestion.explanation}
                   type={suggestion.type}
                 />
               ))}

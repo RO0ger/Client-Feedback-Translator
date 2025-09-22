@@ -3,23 +3,7 @@ import { createTRPCRouter, protectedProcedure } from '@/server/trpc';
 import { analyses } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
-
-// Placeholder for AI analysis function
-const analyzeWithGemini = async (originalContent: string, feedback: string) => {
-  // Mock AI response for now
-  return {
-    interpretation: "The user wants to make the component more engaging.",
-    suggestions: JSON.stringify([
-      {
-        description: "Add a hover effect to the button.",
-        before: "<button>Submit</button>",
-        after: "<button className='hover:scale-105'>Submit</button>",
-        type: "animation"
-      }
-    ]),
-    confidence: 95,
-  };
-};
+import { translateFeedback } from '@/lib/gemini';
 
 const createAnalysisSchema = z.object({
   fileName: z.string().min(1),
@@ -32,18 +16,31 @@ export const analysisRouter = createTRPCRouter({
   create: protectedProcedure
     .input(createAnalysisSchema)
     .mutation(async ({ input, ctx }) => {
-      // AI analysis with Gemini
-      const aiResponse = await analyzeWithGemini(input.originalContent, input.feedback);
-      
-      const [analysis] = await ctx.db.insert(analyses).values({
-        ...input,
-        interpretation: aiResponse.interpretation,
-        suggestions: aiResponse.suggestions, // suggestions is already a JSON string
-        confidence: aiResponse.confidence,
-        userId: ctx.session.user.id,
-      }).returning();
-      
-      return analysis;
+      try {
+        // AI analysis with Gemini
+        const aiResponse = await translateFeedback(
+          input.fileName,
+          input.originalContent,
+          input.feedback
+        );
+
+        const [analysis] = await ctx.db.insert(analyses).values({
+          ...input,
+          interpretation: aiResponse.interpretation,
+          suggestions: JSON.stringify(aiResponse.actionable_changes), // Convert array to JSON string
+          confidence: Math.round(aiResponse.confidence * 100), // Convert 0-1 to 0-100
+          reasoning: aiResponse.reasoning,
+          userId: ctx.session.user.id,
+        }).returning();
+
+        return analysis;
+      } catch (error) {
+        console.error('AI Analysis failed:', error);
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to analyze component. Please try again.',
+        });
+      }
     }),
 
   getById: protectedProcedure
