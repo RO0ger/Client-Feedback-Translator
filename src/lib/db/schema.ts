@@ -84,11 +84,13 @@ export const analyses = pgTable('analyses', {
   fileSize: integer('file_size').notNull(),
   originalContent: text('original_content').notNull(),
   feedback: text('feedback').notNull(),
-  interpretation: text('interpretation').notNull(),
-  suggestions: text('suggestions').notNull(), // JSON string with diffs
-  confidence: integer('confidence').notNull(),
-  reasoning: text('reasoning').notNull(), // AI reasoning for debugging and transparency
+  interpretation: text('interpretation'),
+  suggestions: text('suggestions'), // JSON string with diffs - optional for pending state
+  confidence: integer('confidence'),
+  reasoning: text('reasoning'), // AI reasoning for debugging and transparency - optional for pending state
+  status: text('status').$type<'PENDING' | 'PROCESSING' | 'COMPLETE' | 'FAILED'>().default('PENDING').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
   // Soft delete support
   isDeleted: boolean('is_deleted').default(false).notNull(),
   deletedAt: timestamp('deleted_at'),
