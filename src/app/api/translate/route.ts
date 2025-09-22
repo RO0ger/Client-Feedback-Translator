@@ -4,7 +4,7 @@ import { parseComponent } from '@/lib/parser';
 import { translateFeedback, GeminiError } from '@/lib/gemini';
 import { ParserError } from '@/lib/parser';
 import { supabase } from '@/lib/supabase';
-import { AiTranslateResponse, TranslateResponse } from '@/lib/types';
+import { AiTranslateResponse, TranslateResponse } from '@/types';
 import { auth } from '@/auth';
 
 export async function POST(request: NextRequest) {
