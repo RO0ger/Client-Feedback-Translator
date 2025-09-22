@@ -16,6 +16,17 @@ export const analysisRouter = createTRPCRouter({
   create: protectedProcedure
     .input(createAnalysisSchema)
     .mutation(async ({ input, ctx }) => {
+      const startTime = Date.now();
+
+      // Log on Entry
+      console.log('🚀 AI Analysis initiated', {
+        userId: ctx.session.user.id,
+        fileName: input.fileName,
+        codeLength: input.originalContent.length,
+        feedbackLength: input.feedback.length,
+        timestamp: new Date().toISOString(),
+      });
+
       try {
         // AI analysis with Gemini
         const aiResponse = await translateFeedback(
@@ -33,9 +44,30 @@ export const analysisRouter = createTRPCRouter({
           userId: ctx.session.user.id,
         }).returning();
 
+        // Log on Success
+        const latency = Date.now() - startTime;
+        console.log('✅ AI Analysis completed successfully', {
+          analysisId: analysis.id,
+          userId: ctx.session.user.id,
+          confidenceScore: aiResponse.confidence,
+          suggestionsCount: aiResponse.actionable_changes.length,
+          latencyMs: latency,
+          timestamp: new Date().toISOString(),
+        });
+
         return analysis;
       } catch (error) {
-        console.error('AI Analysis failed:', error);
+        // Log on Failure
+        const latency = Date.now() - startTime;
+        console.error('❌ AI Analysis failed', {
+          userId: ctx.session.user.id,
+          fileName: input.fileName,
+          error: error instanceof Error ? error.message : 'Unknown error',
+          stack: error instanceof Error ? error.stack : undefined,
+          latencyMs: latency,
+          timestamp: new Date().toISOString(),
+        });
+
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to analyze component. Please try again.',
