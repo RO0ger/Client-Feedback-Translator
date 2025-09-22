@@ -59,17 +59,17 @@ export default function DashboardPage() {
   return (
     <FormProvider {...methods}>
       <div className="min-h-screen">
-        <div className="container mx-auto max-w-4xl px-4 py-8 md:px-6 md:py-12">
+        <div className="container mx-auto max-w-5xl px-6 py-12 md:px-8 md:py-16">
           <motion.div
-            className="mb-12 text-center"
+            className="mb-16 text-center"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="mb-4 text-3xl font-bold tracking-tight text-gray-900 md:text-5xl">
+            <h1 className="mb-6 text-4xl font-bold tracking-tight text-white text-glow md:text-6xl">
               Client Feedback Translator
             </h1>
-            <p className="mx-auto max-w-3xl text-lg text-gray-600 md:text-xl">
+            <p className="mx-auto max-w-3xl text-xl text-gray-300 md:text-2xl leading-relaxed">
               Upload your React component, provide client feedback, and get
               actionable code changes instantly.
             </p>
@@ -77,13 +77,13 @@ export default function DashboardPage() {
 
           <form onSubmit={handleSubmit(handleAnalysis)} data-testid="analysis-form">
             <motion.div
-              className="space-y-12 rounded-2xl border border-white/20 bg-white/70 p-6 shadow-2xl backdrop-blur-lg md:p-10"
+              className="space-y-12 rounded-3xl modern-glass p-8 premium-shadow md:p-12"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <section data-testid="upload-section">
-                <h2 className="mb-6 text-2xl font-semibold text-gray-900 md:text-3xl">
+                <h2 className="mb-8 text-3xl font-bold text-white text-glow md:text-4xl">
                   1. Upload Component
                 </h2>
                 <FileUpload
@@ -94,7 +94,7 @@ export default function DashboardPage() {
               </section>
 
               <section data-testid="feedback-section">
-                <h2 className="mb-6 text-2xl font-semibold text-gray-900 md:text-3xl">
+                <h2 className="mb-8 text-3xl font-bold text-white text-glow md:text-4xl">
                   2. Provide Feedback
                 </h2>
                 <FeedbackForm

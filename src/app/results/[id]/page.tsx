@@ -9,12 +9,13 @@ import { MotionDiv } from "@/components/animations/motion-div";
 export const revalidate = 60 // Revalidate page every 60 seconds
 
 interface ResultsPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function ResultsPage({ params }: ResultsPageProps) {
+  const { id } = await params;
   const api = await createApiCaller();
-  const analysis = await api.analysis.getById({ id: params.id }).catch(() => null);
+  const analysis = await api.analysis.getById({ id }).catch(() => null);
 
   if (!analysis) {
     notFound();
@@ -38,10 +39,10 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
         >
           <BackButton />
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 md:text-3xl">
+            <h1 className="text-2xl font-bold text-gradient-primary text-glow md:text-3xl font-inter">
               {analysis.fileName}
             </h1>
-            <p className="mt-1 text-gray-600">Analysis Results</p>
+            <p className="mt-1 text-gradient-secondary font-inter">Analysis Results</p>
           </div>
         </MotionDiv>
 
@@ -53,21 +54,21 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="lg:col-span-1"
           >
-            <div className="rounded-2xl border border-white/20 bg-white/70 p-4 shadow-2xl backdrop-blur-lg lg:sticky lg:top-8 md:p-6">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900 md:text-xl">
+            <div className="rounded-3xl modern-glass p-6 premium-shadow lg:sticky lg:top-8 md:p-8">
+              <h2 className="mb-6 text-xl font-bold text-gradient-primary text-glow md:text-2xl font-inter">
                 Interpretation
               </h2>
-              <p className="mb-6 text-gray-700" data-testid="interpretation">
+              <p className="mb-8 text-gradient-secondary leading-relaxed font-inter" data-testid="interpretation">
                 {analysis.interpretation}
               </p>
 
               <ConfidenceScore score={analysis.confidence} />
 
-              <div className="mt-6 p-4 bg-blue-50 rounded-xl">
-                <h3 className="font-medium text-blue-900 mb-2">
+              <div className="mt-8 p-5 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl border border-blue-400/30">
+                <h3 className="font-semibold text-gradient-primary mb-3 font-inter">
                   Original Feedback
                 </h3>
-                <p className="text-blue-800 text-sm italic">
+                <p className="text-gradient-secondary text-base italic font-inter">
                   &ldquo;{analysis.feedback}&rdquo;
                 </p>
               </div>
@@ -81,7 +82,7 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="lg:col-span-2"
           >
-            <h2 className="mb-6 text-xl font-semibold text-gray-900 md:text-2xl">
+            <h2 className="mb-8 text-2xl font-bold text-gradient-primary text-glow md:text-3xl font-inter">
               Suggested Changes
             </h2>
             <div className="space-y-8" data-testid="code-suggestions">
