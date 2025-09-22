@@ -117,19 +117,15 @@ const PATTERN_EXTRACTION_PROMPT_TEMPLATE = `
 
 /**
  * Sanitizes input strings for use in AI prompts
- * Prevents issues with special characters and ensures safe template substitution
+ * Targets only template literal problematic characters to avoid over-escaping
  * @param input - The string to sanitize
- * @returns Sanitized string safe for use in prompts
+ * @returns Sanitized string safe for template substitution
  */
 function sanitizeForPrompt(input: string): string {
   return input
+    .replace(/`/g, '\\`')    // Escape backticks (template literal delimiters)
+    .replace(/\$/g, '\\$')   // Escape dollar signs (template interpolation)
     .replace(/\\/g, '\\\\')  // Escape backslashes
-    .replace(/"/g, '\\"')    // Escape quotes
-    .replace(/\n/g, '\\n')   // Escape newlines
-    .replace(/\r/g, '\\r')   // Escape carriage returns
-    .replace(/\t/g, '\\t')   // Escape tabs
-    .replace(/\{/g, '\\{')   // Escape template braces
-    .replace(/\}/g, '\\}')   // Escape template braces
     .trim();                 // Remove leading/trailing whitespace
 }
 
@@ -141,6 +137,20 @@ if (!geminiApiKey) {
 }
 
 const genAI = new GoogleGenerativeAI(geminiApiKey);
+
+/**
+ * Factory function for creating configured Gemini models
+ * Ensures consistent JSON response configuration across the application
+ * @returns Configured generative model instance
+ */
+function createJsonModel() {
+  return genAI.getGenerativeModel({
+    model: GEMINI_MODEL,
+    generationConfig: {
+      responseMimeType: "application/json",
+    },
+  });
+}
 
 /**
  * Custom error class for Gemini API related errors
@@ -242,12 +252,7 @@ export async function translateFeedback(
     feedback
   });
 
-  const model = genAI.getGenerativeModel({
-    model: GEMINI_MODEL,
-    generationConfig: {
-      responseMimeType: "application/json", // Crucial for reliability
-    },
-  });
+  const model = createJsonModel();
 
   try {
     // === STEP 1: Interpretation & Planning ===
@@ -318,12 +323,7 @@ export async function extractPatternFromFeedback(feedback: string): Promise<stri
   // Validate inputs
   const validatedInput = extractPatternInputSchema.parse({ feedback });
 
-  const model = genAI.getGenerativeModel({
-    model: GEMINI_MODEL,
-    generationConfig: {
-      responseMimeType: "application/json",
-    },
-  });
+  const model = createJsonModel();
 
   const prompt = PATTERN_EXTRACTION_PROMPT_TEMPLATE.replace('{feedback}', sanitizeForPrompt(validatedInput.feedback));
 
@@ -337,7 +337,7 @@ export async function extractPatternFromFeedback(feedback: string): Promise<stri
     return validated.pattern;
   } catch (error) {
     console.error("Gemini Pattern Extraction Error:", error);
-    // Fallback remains a good safety net
-    return validatedInput.feedback.toLowerCase().replace(/\s+/g, ' ').trim();
+    // Return a structured fallback instead of raw text
+    return "General feedback";
   }
 }
