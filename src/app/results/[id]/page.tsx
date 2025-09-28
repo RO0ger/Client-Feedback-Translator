@@ -158,7 +158,7 @@ export default function ResultsPage({ params }: ResultsPageProps) {
           </div>
         ) : analysis && status?.isComplete && analysis.interpretation && analysis.confidence ? (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column - Interpretation */}
+            {/* Left Column - Original Feedback */}
             <MotionDiv
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -167,9 +167,18 @@ export default function ResultsPage({ params }: ResultsPageProps) {
             >
               <div className="rounded-3xl modern-glass p-6 premium-shadow lg:sticky lg:top-8 md:p-8">
                 <h2 className="mb-6 text-xl font-bold text-gradient-primary text-glow md:text-2xl font-inter">
-                  Interpretation
+                  Original Feedback
                 </h2>
-                <p className="mb-8 text-gradient-secondary leading-relaxed font-inter" data-testid="interpretation">
+                <div className="mb-8 p-5 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl border border-blue-400/30">
+                  <p className="text-gradient-secondary text-base font-inter leading-relaxed">
+                    &ldquo;{analysis.feedback}&rdquo;
+                  </p>
+                </div>
+
+                <h3 className="mb-4 text-lg font-semibold text-gradient-primary font-inter">
+                  AI Interpretation
+                </h3>
+                <p className="mb-6 text-gradient-secondary leading-relaxed font-inter text-sm" data-testid="interpretation">
                   {analysis.interpretation}
                 </p>
 
@@ -185,15 +194,6 @@ export default function ResultsPage({ params }: ResultsPageProps) {
                     </p>
                   </div>
                 )}
-
-                <div className="mt-8 p-5 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl border border-blue-400/30">
-                  <h3 className="font-semibold text-gradient-primary mb-3 font-inter">
-                    Original Feedback
-                  </h3>
-                  <p className="text-gradient-secondary text-base italic font-inter">
-                    &ldquo;{analysis.feedback}&rdquo;
-                  </p>
-                </div>
               </div>
             </MotionDiv>
 
