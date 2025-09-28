@@ -156,7 +156,7 @@ export default function ResultsPage({ params }: ResultsPageProps) {
               Try Again
             </Button>
           </div>
-        ) : analysis && status?.isComplete ? (
+        ) : analysis && status?.isComplete && analysis.interpretation && analysis.confidence ? (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left Column - Interpretation */}
             <MotionDiv
@@ -173,7 +173,18 @@ export default function ResultsPage({ params }: ResultsPageProps) {
                   {analysis.interpretation}
                 </p>
 
-                <ConfidenceScore score={analysis.confidence || 0} />
+                {analysis.confidence !== null ? (
+                  <ConfidenceScore score={analysis.confidence} />
+                ) : (
+                  <div className="p-4 bg-gradient-to-r from-gray-800/50 to-gray-700/30 rounded-xl border border-gray-600/30">
+                    <h4 className="font-semibold text-gradient-primary mb-2 font-inter">
+                      Confidence Score
+                    </h4>
+                    <p className="text-3xl font-bold text-gray-400 font-inter">
+                      --
+                    </p>
+                  </div>
+                )}
 
                 <div className="mt-8 p-5 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl border border-blue-400/30">
                   <h3 className="font-semibold text-gradient-primary mb-3 font-inter">
