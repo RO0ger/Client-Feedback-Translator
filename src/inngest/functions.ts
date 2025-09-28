@@ -39,6 +39,12 @@ export const processAnalysis = inngest.createFunction(
         throw new Error(`Analysis ${analysisId} not found`);
       }
 
+      // Check if analysis is already being processed or completed
+      if (result.status === 'PROCESSING' || result.status === 'COMPLETE') {
+        console.log(`Analysis ${analysisId} already has status: ${result.status}`);
+        return result;
+      }
+
       return result;
     });
 
