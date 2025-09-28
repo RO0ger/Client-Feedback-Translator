@@ -44,76 +44,110 @@ const extractPatternInputSchema = z.object({
   feedback: z.string().min(3, "Feedback too short").max(500, "Feedback too long"),
 });
 
-// Prompt templates
+// 10/10 OPTIMIZED PROMPT TEMPLATES
 const INTERPRETATION_PROMPT_TEMPLATE = `
-    ROLE: You are an expert Frontend Code Reviewer.
-    TASK: Analyze the client feedback in the context of the provided React component. Your goal is to understand the user's intent and create a high-level plan for the required code changes. Do not write or generate any code yourself.
+You are a top 1% precision code analysis expert. Your ONLY job is to understand client feedback and create an exact implementation plan.
 
-    CONTEXT:
-    - Component Name: {componentName}
+CRITICAL RULES:
+1. Follow the client's EXACT request - do not interpret, improve, or suggest alternatives
+2. If they say "black", use black (#000000 or text-black), NOT grey
+3. If they say specific colors, use those EXACT colors
+4. Be literal - don't add your own design opinions
 
-    <component_code>
-    {componentCode}
-    </component_code>
+COMPONENT TO ANALYZE:
+Component Name: {componentName}
 
-    <client_feedback>
-    "{feedback}"
-    </client_feedback>
+<component_code>
+{componentCode}
+</component_code>
 
-    OUTPUT FORMAT (MUST be valid JSON):
+CLIENT REQUEST:
+"{feedback}"
+
+TASK: Create a precise plan that implements EXACTLY what the client asked for.
+
+REQUIRED JSON OUTPUT:
+{
+  "interpretation": "Restate exactly what the client wants in technical terms",
+  "reasoning": "Explain why this exact change addresses their request",
+  "change_plan": [
     {
-      "interpretation": "A technical summary of what the client wants.",
-      "reasoning": "A high-level explanation of why the proposed changes will address the feedback.",
-      "change_plan": [
-        {
-          "element_to_change": "A description of the JSX element or code block to modify, e.g., 'The main button element'.",
-          "change_required": "A clear instruction for the change, e.g., 'Add a hover animation to increase visual feedback.' or 'Increase the top padding from p-4 to p-6.'"
-        }
-      ],
-      "confidence": 0.0 to 1.0
+      "element_to_change": "Specific JSX element or CSS class to modify",
+      "change_required": "Exact change needed - use client's specified values"
     }
-  `;
+  ],
+  "confidence": 0.9
+}
+
+EXAMPLES:
+- Client says "make font black" → use text-black or #000000, NOT text-gray-900
+- Client says "change background to yellow" → use bg-yellow-400 or #FFFF00, NOT bg-yellow-100
+- Client says "increase padding" → specify exact padding increase like "p-4 to p-6"
+
+Be precise. Be literal. Follow instructions exactly.
+`;
 
 const CODE_GENERATION_PROMPT_TEMPLATE = `
-    ROLE: You are a Senior Frontend Developer specializing in React and Tailwind CSS.
-    TASK: Execute the following change plan on the provided component code. Your goal is to generate only the specific code changes required.
+You are a top 1% surgical code editor. Execute the change plan with ZERO deviation.
 
-    <component_code>
-    {componentCode}
-    </component_code>
+COMPONENT CODE:
+<component_code>
+{componentCode}
+</component_code>
 
-    <change_plan>
-    {changePlan}
-    </change_plan>
+CHANGE PLAN TO EXECUTE:
+<change_plan>
+{changePlan}
+</change_plan>
 
-    OUTPUT FORMAT (MUST be valid JSON):
+CRITICAL EXECUTION RULES:
+1. Find the EXACT code snippets that need changing
+2. Make ONLY the changes specified in the plan
+3. Use EXACT values specified (if plan says "text-black", use "text-black")
+4. Match code character-for-character in "before" field
+5. No creative additions or "improvements"
+
+REQUIRED JSON OUTPUT:
+{
+  "actionable_changes": [
     {
-      "actionable_changes": [
-        {
-          "type": "css|props|structure|animation",
-          "before": "The exact original code snippet to be replaced. Must be a character-for-character match from the component code.",
-          "after": "The new code snippet to replace the original.",
-          "explanation": "A concise technical reason for this specific change, derived from the plan."
-        }
-      ],
-      "external_dependencies_noted": ["List any new libraries needed, e.g., 'framer-motion'"],
-      "parent_component_changes_noted": ["List any required changes in the parent component, e.g., 'The parent must now pass a 'variant' prop.'"]
+      "type": "css|props|structure|animation",
+      "before": "EXACT original code snippet (must match character-for-character)",
+      "after": "EXACT replacement code with only the specified change",
+      "explanation": "Brief explanation of what was changed"
     }
-  `;
+  ],
+  "external_dependencies_noted": [],
+  "parent_component_changes_noted": []
+}
+
+VALIDATION CHECKLIST:
+✓ "before" field matches existing code exactly
+✓ "after" field contains only the requested change
+✓ No additional modifications added
+✓ Tailwind classes are valid (text-black, bg-yellow-400, etc.)
+
+Execute the plan precisely. No interpretations. No improvements.
+`;
 
 const PATTERN_EXTRACTION_PROMPT_TEMPLATE = `
-    ROLE: You are a highly efficient text analysis API.
-    TASK: Analyze the user feedback and distill its core intent into a concise, standardized "pattern" phrase. Then, classify it.
+Extract the core intent from this feedback. Be direct and literal.
 
-    EXAMPLES:
-    - Feedback: "it just doesn't pop" -> {"pattern": "Enhance visual impact", "category": "Style"}
-    - Feedback: "feels a bit cramped" -> {"pattern": "Increase spacing/padding", "category": "Layout"}
-    - Feedback: "where do I click?" -> {"pattern": "Improve call-to-action clarity", "category": "UX"}
+FEEDBACK: "{feedback}"
 
-    USER FEEDBACK: "{feedback}"
+RULES:
+- If they mention specific colors/values, that's the pattern
+- Don't interpret or improve their request
+- Categories: Style, Layout, Functionality, Copywriting, UX
 
-    OUTPUT: Your response must be a single, minified JSON object matching this schema: { "pattern": string, "category": "Style"|"Layout"|"Functionality"|"Copywriting"|"UX" }. Do not include any other text.
-  `;
+OUTPUT (JSON only):
+{ "pattern": "exact intent", "category": "appropriate category" }
+
+EXAMPLES:
+- "make it black" → {"pattern": "Change color to black", "category": "Style"}
+- "add more padding" → {"pattern": "Increase spacing", "category": "Layout"}
+- "button doesn't work" → {"pattern": "Fix functionality", "category": "Functionality"}
+`;
 
 /**
  * Sanitizes input strings for use in AI prompts
@@ -256,14 +290,21 @@ export async function translateFeedback(
 
   try {
     // === STEP 1: Interpretation & Planning ===
-    console.log("Initiating Step 1: Interpretation...");
+    console.log("🤖 STEP 1: Building interpretation prompt...");
     const interpretationPrompt = buildInterpretationPrompt(validatedInput.componentName, validatedInput.componentCode, validatedInput.feedback);
+    console.log("🤖 STEP 1: Prompt length:", interpretationPrompt.length);
+    console.log("🤖 STEP 1: Making API call to Gemini...");
     const interpretationResult = await retryWithBackoff(async () => {
       return await model.generateContent(interpretationPrompt);
     });
     const planResponseText = interpretationResult.response.text();
+    console.log("🤖 STEP 1: Raw API response:", planResponseText.substring(0, 200) + "...");
     const plan = aiPlanSchema.parse(JSON.parse(planResponseText));
-    console.log("Step 1 Complete. Plan generated:", plan);
+    console.log("🤖 STEP 1: Parsed response:", {
+      confidence: plan.confidence,
+      interpretation: plan.interpretation.substring(0, 100) + "...",
+      changesCount: plan.change_plan.length
+    });
 
     // === STEP 2: Code Generation ===
     console.log("Initiating Step 2: Code Generation...");
