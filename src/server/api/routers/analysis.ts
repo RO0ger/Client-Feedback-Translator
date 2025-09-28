@@ -3,7 +3,6 @@ import { createTRPCRouter, protectedProcedure } from '@/server/trpc';
 import { analyses } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
-import { translateFeedback } from '@/lib/gemini';
 import { inngest } from '@/lib/inngest';
 
 const createAnalysisSchema = z.object({
@@ -33,20 +32,40 @@ export const analysisRouter = createTRPCRouter({
         const [analysis] = await ctx.db.insert(analyses).values({
           ...input,
           status: 'PENDING',
+          // These will be populated by the background worker
+          interpretation: null,
+          suggestions: null,
+          confidence: null,
+          reasoning: null,
           userId: ctx.session.user.id,
         }).returning();
 
-        // Send to Inngest for background processing
-        await inngest.send({
-          name: 'analysis/process',
-          data: {
+        // Send to Inngest for background processing (only if Inngest is configured)
+        if (process.env.NODE_ENV === 'production' && process.env.INNGEST_BASE_URL) {
+          await inngest.send({
+            name: 'analysis/process',
+            data: {
+              analysisId: analysis.id,
+              userId: ctx.session.user.id,
+              fileName: input.fileName,
+              originalContent: input.originalContent,
+              feedback: input.feedback,
+            },
+          });
+        } else {
+          // In development, process immediately for testing
+          console.log('🔄 Development mode: Processing analysis immediately');
+
+          // Import the processing function and run it immediately
+          const { processAnalysisInDevelopment } = await import('@/lib/dev-processing');
+          await processAnalysisInDevelopment({
             analysisId: analysis.id,
             userId: ctx.session.user.id,
             fileName: input.fileName,
             originalContent: input.originalContent,
             feedback: input.feedback,
-          },
-        });
+          });
+        }
 
         // Log on Success (immediate creation)
         const latency = Date.now() - startTime;
