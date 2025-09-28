@@ -84,10 +84,10 @@ export const analyses = pgTable('analyses', {
   fileSize: integer('file_size').notNull(),
   originalContent: text('original_content').notNull(),
   feedback: text('feedback').notNull(),
-  interpretation: text('interpretation'),
-  suggestions: text('suggestions'), // JSON string with diffs - optional for pending state
-  confidence: integer('confidence'),
-  reasoning: text('reasoning'), // AI reasoning for debugging and transparency - optional for pending state
+  interpretation: text('interpretation'), // Can be null during async processing
+  suggestions: text('suggestions'), // JSON string with diffs - can be null during pending state
+  confidence: integer('confidence'), // Can be null during async processing
+  reasoning: text('reasoning'), // AI reasoning - can be null during pending state
   status: text('status').$type<'PENDING' | 'PROCESSING' | 'COMPLETE' | 'FAILED'>().default('PENDING').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
